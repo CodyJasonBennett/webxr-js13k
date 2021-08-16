@@ -2,7 +2,9 @@ import { WebGLRenderer, PerspectiveCamera, Scene, Color, Fog, AmbientLight } fro
 import { VRButton } from 'three/examples/jsm/webxr/VRButton';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stars from './objects/Stars';
-import XWing from './objects/XWing';
+import Model from './objects/Model';
+import xwingPoints from './data/xwing';
+import tiePoints from './data/tie';
 
 const { innerWidth, innerHeight } = window;
 
@@ -26,7 +28,7 @@ controls.target.set(9, 2, 15);
 
 const scene = new Scene();
 scene.background = new Color(0x020209);
-scene.fog = new Fog(0x070715, 10, 100);
+// scene.fog = new Fog(0x070715, 10, 100);
 
 const ambientLight = new AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
@@ -34,8 +36,13 @@ scene.add(ambientLight);
 const stars = new Stars();
 scene.add(stars);
 
-const xwing = new XWing();
+const xwing = new Model(xwingPoints);
+xwing.position.x = -16;
 scene.add(xwing);
+
+const tie = new Model(tiePoints);
+tie.position.x = 16;
+scene.add(tie);
 
 window.addEventListener('resize', () => {
   const { innerWidth, innerHeight } = window;
