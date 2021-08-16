@@ -6,9 +6,7 @@ module.exports = (_, { mode }) => ({
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
+        use: 'babel-loader',
       },
     ],
   },
@@ -16,13 +14,7 @@ module.exports = (_, { mode }) => ({
     new HtmlWebpackPlugin({
       template: './src/index.html',
       filename: './index.html',
-      minify: {
-        collapseWhitespace: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        minifyURLs: true,
-      },
+      minify: 'auto',
     }),
   ],
   devtool: mode === 'development' ? 'source-map' : undefined,
