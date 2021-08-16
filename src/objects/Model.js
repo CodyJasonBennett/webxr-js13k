@@ -1,9 +1,11 @@
 import { InstancedMesh, BoxGeometry, MeshStandardMaterial, Object3D, Color } from 'three';
+import { toPoints } from '../utils/data';
 
 class Model extends InstancedMesh {
-  constructor(points) {
-    const count = points.flatMap(line => line.slice(3)).length;
+  constructor({ points: data, colors }) {
+    const points = typeof data === 'string' ? toPoints(data) : data;
 
+    const count = points.flatMap(line => line.slice(3)).length;
     const geometry = new BoxGeometry();
     const material = new MeshStandardMaterial();
     super(geometry, material, count);
@@ -12,13 +14,13 @@ class Model extends InstancedMesh {
     const tempColor = new Color();
 
     let index = 0;
-    points.forEach(([x, y, z, ...colors]) => {
-      colors.forEach((color, offset) => {
+    points.forEach(([x, y, z, ...colorIndices]) => {
+      colorIndices.forEach((colorIndex, offset) => {
         tempObject.position.set(x, y, z + offset);
         tempObject.updateMatrix();
         this.setMatrixAt(index, tempObject.matrix);
 
-        tempColor.setHex(color);
+        tempColor.setHex(colors[colorIndex]);
         this.setColorAt(index, tempColor);
 
         index++;

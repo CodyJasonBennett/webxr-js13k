@@ -3,8 +3,8 @@ import { VRButton } from 'three/examples/jsm/webxr/VRButton';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stars from './objects/Stars';
 import Model from './objects/Model';
-import xwingPoints from './data/xwing';
-import tiePoints from './data/tie';
+import xwingData from './data/xwing';
+import tieData from './data/tie';
 
 const { innerWidth, innerHeight } = window;
 
@@ -36,11 +36,11 @@ scene.add(ambientLight);
 const stars = new Stars();
 scene.add(stars);
 
-const xwing = new Model(xwingPoints);
+const xwing = new Model(xwingData);
 xwing.position.x = -16;
 scene.add(xwing);
 
-const tie = new Model(tiePoints);
+const tie = new Model(tieData);
 tie.position.x = 16;
 scene.add(tie);
 
