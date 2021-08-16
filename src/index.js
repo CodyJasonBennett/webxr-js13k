@@ -6,16 +6,18 @@ const Scene = () => {
   const { gl, camera } = useThree();
 
   useEffect(() => {
+    gl.xr.enabled = true;
     gl.setClearAlpha(1);
     camera.position.set(0, 1.3, 3);
 
     navigator.xr?.isSessionSupported('immersive-vr').then(supported => {
       if (!supported) return;
 
-      const session = navigator.xr.requestSession('immersive-vr', {
-        optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
-      });
-      gl.xr.setSession(session);
+      navigator.xr
+        .requestSession('immersive-vr', {
+          optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
+        })
+        .then(gl.xr.setSession);
     });
   }, [gl, camera]);
 
