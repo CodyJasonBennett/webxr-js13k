@@ -21,10 +21,10 @@ if ('xr' in navigator) {
 }
 
 const camera = new PerspectiveCamera(70, innerWidth / innerHeight);
+camera.position.set(8, 16, 48);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.target.set(9, 2, 15);
 
 const scene = new Scene();
 scene.background = new Color(0x020209);
