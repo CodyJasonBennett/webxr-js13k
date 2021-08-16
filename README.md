@@ -13,3 +13,15 @@ Once it's done start up a local server with:
 ```bash
 yarn start
 ```
+
+To create a production build:
+
+```bash
+yarn build
+```
+
+To check output size:
+
+```bash
+yarn analyze
+```

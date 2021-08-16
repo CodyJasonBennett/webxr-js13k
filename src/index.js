@@ -1,39 +1,46 @@
-import { useEffect } from 'react';
-import { useThree, render } from '@react-three/fiber';
+import { WebGLRenderer, PerspectiveCamera, Scene, Color, Fog, AmbientLight } from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton';
-import Controls from './Controls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import Stars from './Stars';
+import Ship from './Ship';
 
-const Scene = () => {
-  const { gl, camera } = useThree();
+const { innerWidth, innerHeight } = window;
 
-  useEffect(() => {
-    gl.xr.enabled = true;
-    gl.setClearAlpha(1);
-    camera.position.set(0, 1.3, 3);
+const renderer = new WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(2);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
 
-    const button = VRButton.createButton(gl);
-    document.body.appendChild(button);
+if ('xr' in navigator) {
+  renderer.xr.enabled = true;
+  renderer.xr.setFramebufferScaleFactor(2.0);
+  document.body.appendChild(VRButton.createButton(renderer));
+}
 
-    return () => {
-      document.body.removeChild(button);
-    };
-  }, [gl, camera]);
+const camera = new PerspectiveCamera(70, innerWidth / innerHeight);
 
-  return (
-    <>
-      <gridHelper args={[4, 4]} />
-      <Controls enableDamping />
-    </>
-  );
-};
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.target.set(9, 2, 15);
 
-const handleResize = () => {
-  const { innerWidth, innerHeight } = window;
+const scene = new Scene();
+scene.background = new Color(0x020209);
+scene.fog = new Fog(0x070715, 10, 100);
 
-  render(<Scene />, document.querySelector('canvas'), {
-    size: { width: innerWidth, height: innerHeight },
-  });
-};
+const ambientLight = new AmbientLight(0xffffff, 1);
+scene.add(ambientLight);
 
-window.addEventListener('resize', handleResize);
-handleResize();
+const stars = new Stars();
+scene.add(stars);
+
+const ship = new Ship();
+scene.add(ship);
+
+renderer.setAnimationLoop(() => {
+  controls.update();
+
+  scene.traverse(node => node.update?.());
+
+  renderer.render(scene, camera);
+});
