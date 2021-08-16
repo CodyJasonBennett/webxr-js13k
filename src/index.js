@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useThree, render } from '@react-three/fiber';
+import { VRButton } from 'three/examples/jsm/webxr/VRButton';
 import Controls from './Controls';
 
 const Scene = () => {
@@ -10,15 +11,12 @@ const Scene = () => {
     gl.setClearAlpha(1);
     camera.position.set(0, 1.3, 3);
 
-    navigator.xr?.isSessionSupported('immersive-vr').then(supported => {
-      if (!supported) return;
+    const button = VRButton.createButton(gl);
+    document.body.appendChild(button);
 
-      navigator.xr
-        .requestSession('immersive-vr', {
-          optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
-        })
-        .then(gl.xr.setSession);
-    });
+    return () => {
+      document.body.removeChild(button);
+    };
   }, [gl, camera]);
 
   return (
