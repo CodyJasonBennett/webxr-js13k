@@ -1,6 +1,4 @@
-import { InstancedMesh, BoxGeometry, MeshStandardMaterial, Object3D, Color } from 'three';
-
-const points = [
+const xwing = [
   // Layer 1
   [9, 5, 0, 0xff4800],
   [11, 5, 0, 0xff4800],
@@ -522,26 +520,4 @@ const points = [
   [11, 2, 25, 0x9da289],
 ];
 
-class Ship extends InstancedMesh {
-  constructor() {
-    const geometry = new BoxGeometry();
-    const material = new MeshStandardMaterial({ instancingColor: true });
-    super(geometry, material, points.length + 1);
-
-    const tempObject = new Object3D();
-    const tempColor = new Color();
-
-    points.forEach((point, index) => {
-      const [x, y, z, color = 0xc1c1c1] = point;
-      tempObject.position.set(x, y, z);
-      tempObject.updateMatrix();
-      this.setMatrixAt(index, tempObject.matrix);
-
-      tempColor.setHex(color);
-      this.setColorAt(index, tempColor);
-    });
-    this.instanceMatrix.needsUpdate = true;
-  }
-}
-
-export default Ship;
+export default xwing;

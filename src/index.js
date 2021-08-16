@@ -1,8 +1,8 @@
 import { WebGLRenderer, PerspectiveCamera, Scene, Color, Fog, AmbientLight } from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import Stars from './Stars';
-import Ship from './Ship';
+import Stars from './objects/Stars';
+import XWing from './objects/XWing';
 
 const { innerWidth, innerHeight } = window;
 
@@ -34,8 +34,16 @@ scene.add(ambientLight);
 const stars = new Stars();
 scene.add(stars);
 
-const ship = new Ship();
-scene.add(ship);
+const xwing = new XWing();
+scene.add(xwing);
+
+window.addEventListener('resize', () => {
+  const { innerWidth, innerHeight } = window;
+
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+});
 
 renderer.setAnimationLoop(() => {
   controls.update();
