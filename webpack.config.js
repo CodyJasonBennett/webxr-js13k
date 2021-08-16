@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
-module.exports = (_, { mode }) => ({
+module.exports = {
   module: {
     rules: [
       {
@@ -17,5 +18,10 @@ module.exports = (_, { mode }) => ({
       minify: 'auto',
     }),
   ],
-  devtool: mode === 'development' ? 'source-map' : undefined,
-});
+  devtool: 'source-map',
+  optimization: {
+    usedExports: true,
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+  },
+};

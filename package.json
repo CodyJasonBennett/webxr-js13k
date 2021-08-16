@@ -15,6 +15,7 @@
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
     "source-map-explorer": "^2.5.2",
+    "terser-webpack-plugin": "^5.1.4",
     "webpack": "^5.3.2",
     "webpack-cli": "^4.1.0",
     "webpack-dev-server": "^3.11.0"
@@ -30,5 +31,18 @@
     "analyze": "source-map-explorer 'dist/*.js'",
     "lint": "prettier src --check && eslint src",
     "lint-fix": "prettier src --write && eslint src --fix"
+  },
+  "browserslist": {
+    "production": [
+      ">10%",
+      "not dead",
+      "not ie 11",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
