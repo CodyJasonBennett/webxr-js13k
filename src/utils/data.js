@@ -19,12 +19,12 @@ export const toLines = points =>
     return [x, y, z, ...colors];
   });
 
-export const toBase64 = lines =>
+export const encode = lines =>
   lines
     .map(points =>
       btoa(String.fromCharCode.apply(!1, new Uint8Array(points))).replace(/=*$/, '')
     )
     .join(' ');
 
-export const toPoints = base64 =>
-  base64.split(' ').map(line => Array.from(atob(line)).map(v => v.charCodeAt()));
+export const decode = base64 =>
+  base64.split(' ').map(line => Array.from(atob(line)).map(c => c.charCodeAt()));

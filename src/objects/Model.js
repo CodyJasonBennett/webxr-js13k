@@ -1,9 +1,9 @@
 import { InstancedMesh, BoxGeometry, MeshStandardMaterial, Object3D, Color } from 'three';
-import { toPoints } from '../utils/data';
+import { decode } from '../utils/data';
 
 class Model extends InstancedMesh {
   constructor({ points: data, colors }) {
-    const points = typeof data === 'string' ? toPoints(data) : data;
+    const points = typeof data === 'string' ? decode(data) : data;
 
     const count = points.flatMap(line => line.slice(3)).length;
     const geometry = new BoxGeometry();

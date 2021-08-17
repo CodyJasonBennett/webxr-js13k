@@ -8,7 +8,7 @@ import tieData from './data/tie';
 
 const { innerWidth, innerHeight } = window;
 
-const renderer = new WebGLRenderer({ antialias: true });
+const renderer = new WebGLRenderer();
 renderer.setSize(innerWidth, innerHeight);
 renderer.setPixelRatio(2);
 renderer.shadowMap.enabled = true;
@@ -28,7 +28,7 @@ controls.enableDamping = true;
 
 const scene = new Scene();
 scene.background = new Color(0x020209);
-// scene.fog = new Fog(0x070715, 10, 100);
+scene.fog = new Fog(0x070715, 100, 500);
 
 const ambientLight = new AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
