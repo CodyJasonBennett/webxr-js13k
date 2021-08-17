@@ -19,6 +19,17 @@ export const toLines = points =>
     return [x, y, z, ...colors];
   });
 
+export const toTrack = (bars, groupLength = 3) =>
+  bars.reduce((output, bar, index) => {
+    if (index % groupLength) {
+      output[output.length - 1].push(bar);
+    } else {
+      output.push([bar]);
+    }
+
+    return output;
+  }, []);
+
 export const encode = lines =>
   lines
     .map(points =>
