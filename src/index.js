@@ -1,21 +1,12 @@
-import {
-  WebGLRenderer,
-  PerspectiveCamera,
-  Scene,
-  Color,
-  Fog,
-  AmbientLight,
-  AudioContext,
-} from 'three';
+import { WebGLRenderer, PerspectiveCamera, Scene, Color, Fog, AmbientLight } from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import Stars from './objects/Stars';
-import Model from './objects/Model';
-import xwingData from './data/xwing';
-import tieData from './data/tie';
-import { playNote } from './utils/audio';
-import { decode } from './utils/data';
-import menu from './data/menu';
+import Audio from 'managers/Audio';
+import Stars from 'objects/Stars';
+import Model from 'objects/Model';
+import xwingData from 'data/xwing';
+import tieData from 'data/tie';
+import menu from 'data/menu';
 
 const { innerWidth, innerHeight } = window;
 
@@ -36,6 +27,9 @@ camera.position.set(8, 16, 48);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+
+const audio = new Audio();
+audio.play(menu);
 
 const scene = new Scene();
 scene.background = new Color(0x020209);
@@ -63,26 +57,9 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
-const context = AudioContext.getContext();
-
-const queue = decode(menu).reduce((output, [note, offset, bars]) => {
-  output.push({ note, start: offset * 0.15, duration: bars * 0.15, playing: false });
-
-  return output;
-}, []);
-
 renderer.setAnimationLoop(() => {
   controls.update();
-
-  queue.forEach(({ note, start, duration, playing = false }, index) => {
-    const shouldPlay =
-      context.currentTime > start && context.currentTime < start + duration;
-
-    if (!playing && shouldPlay) {
-      playNote(context, note, duration);
-      queue[index].playing = true;
-    }
-  });
+  audio.update();
 
   scene.traverse(node => node.update?.());
 

@@ -1,4 +1,4 @@
-import notes from '../data/notes';
+import notes from 'data/notes';
 
 export const toLines = points =>
   Object.values(

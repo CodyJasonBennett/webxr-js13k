@@ -1,5 +1,5 @@
 import { InstancedMesh, BoxGeometry, MeshStandardMaterial, Object3D, Color } from 'three';
-import { decode } from '../utils/data';
+import { decode } from 'utils/data';
 
 class Model extends InstancedMesh {
   constructor({ points: data, colors }) {
