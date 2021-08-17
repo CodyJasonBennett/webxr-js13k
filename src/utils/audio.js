@@ -6,7 +6,8 @@ export const playNote = (audioContext, note, duration, type = 'square') => {
   oscillator.type = type;
 
   // Get note frequency
-  const frequency = notes[note] || 0;
+  const frequency =
+    (typeof note === 'string' ? notes[note] : Object.values(notes)[note]) || 0;
   oscillator.frequency.value = frequency;
 
   // Create gain stage/node

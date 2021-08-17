@@ -14,6 +14,7 @@ import Model from './objects/Model';
 import xwingData from './data/xwing';
 import tieData from './data/tie';
 import { playNote } from './utils/audio';
+import { decode } from './utils/data';
 import menu from './data/menu';
 
 const { innerWidth, innerHeight } = window;
@@ -64,7 +65,7 @@ window.addEventListener('resize', () => {
 
 const context = AudioContext.getContext();
 
-const queue = menu.reduce((output, [note, offset, bars]) => {
+const queue = decode(menu).reduce((output, [note, offset, bars]) => {
   output.push({ note, start: offset * 0.15, duration: bars * 0.15, playing: false });
 
   return output;
