@@ -31,7 +31,8 @@ if ('xr' in navigator) {
   document.body.appendChild(VRButton.createButton(renderer));
 }
 
-const camera = new PerspectiveCamera(70, resolution.x / resolution.y, 0.1, 5000);
+const camera = new PerspectiveCamera(70, resolution.x / resolution.y, 0.1, 50000);
+camera.position.z = 20;
 
 const scene = new Scene();
 scene.background = new Color(0x020209);
@@ -54,12 +55,13 @@ scene.add(player);
 player.add(camera);
 
 const xwing = new Model(xwingData);
-xwing.position.set(1, -0.8, -2);
 xwing.rotation.y = Math.PI;
+xwing.position.x = xwing.size.x / 2;
+xwing.position.y -= 8;
 player.add(xwing);
 
 const tie = new Model(tieData);
-tie.position.set(-0.6, -0.4, -6);
+tie.position.z = 25;
 scene.add(tie);
 
 const controls = new Controls(player, renderer.domElement);
@@ -77,17 +79,26 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
-const start = () => {
+const handleLock = () => {
   renderer.domElement.requestPointerLock();
-  document.body.addEventListener('click', start);
-
-  renderer.setAnimationLoop(() => {
-    controls.update();
-    audio.update();
-
-    scene.traverse(node => node.update?.());
-
-    composer.render();
-  });
+  document.body.addEventListener('click', handleLock);
 };
-document.body.addEventListener('click', start);
+document.body.addEventListener('click', handleLock);
+
+renderer.setAnimationLoop(() => {
+  // Animate FOV when boosting
+  if (controls.boosted && camera.fov < 80) {
+    camera.fov += 0.2;
+    camera.updateProjectionMatrix();
+  } else if (!controls.boosted && camera.fov > 70) {
+    camera.fov -= 0.2;
+    camera.updateProjectionMatrix();
+  }
+
+  controls.update();
+  audio.update();
+
+  scene.traverse(node => node.update?.());
+
+  composer.render();
+});

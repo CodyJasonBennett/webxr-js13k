@@ -1,7 +1,7 @@
 import { Clock, Quaternion, Vector3 } from 'three';
 
 const UPDATE_THRESHOLD = 0.000001;
-const MOVEMENT_SPEED = 8;
+const MOVEMENT_SPEED = 80;
 const ROLL_SPEED = 0.8;
 const BOOST_MULTIPLIER = 1.5;
 
@@ -93,7 +93,7 @@ class Controls {
     const moveMult = delta * MOVEMENT_SPEED * boostMult;
     const rotMult = delta * ROLL_SPEED;
 
-    // this.object.translateZ(-moveMult);
+    this.object.translateZ(-moveMult);
 
     this.tmpQuaternion
       .set(
