@@ -78,6 +78,16 @@ class PostProcessing {
     this.normalRenderTarget = pixelRenderTarget(this.renderResolution, RGBFormat, false);
 
     this.normalMaterial = new MeshNormalMaterial();
+
+    const onSessionStateChange = () => {
+      const rendererSize = new Vector2();
+      renderer.getSize(rendererSize);
+
+      this.setSize(rendererSize.x, rendererSize.y);
+    };
+
+    renderer.xr.addEventListener('sessionstart', onSessionStateChange);
+    renderer.xr.addEventListener('sessionend', onSessionStateChange);
   }
 
   setSize(width, height) {
@@ -92,6 +102,8 @@ class PostProcessing {
   }
 
   render() {
+    this.renderer.xr.enabled = false;
+
     this.renderer.setRenderTarget(this.rgbRenderTarget);
     this.renderer.render(this.scene, this.camera);
 
@@ -110,6 +122,8 @@ class PostProcessing {
     this.renderer.setRenderTarget(null);
     this.renderer.render(this.mesh, this.meshCamera);
     this.renderer.setRenderTarget(currentRenderTarget);
+
+    this.renderer.xr.enabled = true;
   }
 }
 

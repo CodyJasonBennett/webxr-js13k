@@ -24,7 +24,6 @@ document.body.appendChild(renderer.domElement);
 
 if ('xr' in navigator) {
   renderer.xr.enabled = true;
-  renderer.xr.setFramebufferScaleFactor(2.0);
   document.body.appendChild(VRButton.createButton(renderer));
 }
 
@@ -37,6 +36,7 @@ scene.fog = new Fog(0x070715, 100, 500);
 
 const effects = new PostProcessing(renderer, scene, camera);
 effects.setSize(innerWidth, innerHeight);
+scene.onAfterRender = () => effects.render();
 
 const ambientLight = new AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
@@ -93,5 +93,5 @@ renderer.setAnimationLoop(() => {
 
   scene.traverse(node => node.update?.());
 
-  effects.render();
+  renderer.render(scene, camera);
 });
