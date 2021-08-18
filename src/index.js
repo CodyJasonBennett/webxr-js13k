@@ -36,7 +36,6 @@ scene.fog = new Fog(0x070715, 100, 500);
 
 const effects = new PostProcessing(renderer, scene, camera);
 effects.setSize(innerWidth, innerHeight);
-scene.onAfterRender = () => effects.render();
 
 const ambientLight = new AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
@@ -93,5 +92,6 @@ renderer.setAnimationLoop(() => {
 
   scene.traverse(node => node.update?.());
 
-  renderer.render(scene, camera);
+  // renderer.render(scene, camera);
+  effects.render();
 });
