@@ -27,6 +27,8 @@ class Model extends InstancedMesh {
       });
     });
     this.instanceMatrix.needsUpdate = true;
+
+    this.scale.divideScalar(10);
   }
 }
 

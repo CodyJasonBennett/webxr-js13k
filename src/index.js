@@ -1,12 +1,19 @@
-import { WebGLRenderer, PerspectiveCamera, Scene, Color, Fog, AmbientLight } from 'three';
+import {
+  WebGLRenderer,
+  PerspectiveCamera,
+  Scene,
+  Color,
+  Fog,
+  AmbientLight,
+  Group,
+} from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';
 import Stars from 'objects/Stars';
 import Model from 'objects/Model';
-import xwingData from 'data/xwing';
-import tieData from 'data/tie';
-import menu from 'data/menu';
+import xwingData from 'assets/xwing';
+import tieData from 'assets/tie';
 
 const { innerWidth, innerHeight } = window;
 
@@ -23,13 +30,6 @@ if ('xr' in navigator) {
 }
 
 const camera = new PerspectiveCamera(70, innerWidth / innerHeight);
-camera.position.set(8, 16, 48);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-
-const audio = new Audio();
-audio.play(menu);
 
 const scene = new Scene();
 scene.background = new Color(0x020209);
@@ -41,13 +41,22 @@ scene.add(ambientLight);
 const stars = new Stars();
 scene.add(stars);
 
+const player = new Group();
+scene.add(player);
+player.add(camera);
+
 const xwing = new Model(xwingData);
-xwing.position.x = -16;
-scene.add(xwing);
+xwing.position.set(1, -0.8, -2);
+xwing.rotation.y = Math.PI;
+player.add(xwing);
 
 const tie = new Model(tieData);
-tie.position.x = 16;
+tie.position.x = 1;
 scene.add(tie);
+
+const controls = new Controls(player, renderer.domElement);
+
+const audio = new Audio();
 
 window.addEventListener('resize', () => {
   const { innerWidth, innerHeight } = window;
@@ -57,11 +66,17 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
-renderer.setAnimationLoop(() => {
-  controls.update();
-  audio.update();
+const start = () => {
+  renderer.domElement.requestPointerLock();
+  document.body.addEventListener('click', start);
 
-  scene.traverse(node => node.update?.());
+  renderer.setAnimationLoop(() => {
+    controls.update();
+    audio.update();
 
-  renderer.render(scene, camera);
-});
+    scene.traverse(node => node.update?.());
+
+    renderer.render(scene, camera);
+  });
+};
+document.body.addEventListener('click', start);

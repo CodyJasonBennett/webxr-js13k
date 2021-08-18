@@ -23,7 +23,7 @@
   "scripts": {
     "start": "webpack serve --hot --open --port 80 --mode development",
     "build": "rimraf dist && webpack --mode production",
-    "analyze": "source-map-explorer 'dist/*.js'",
+    "analyze": "node bin/analyze",
     "lint": "prettier src --check && eslint src",
     "lint-fix": "prettier src --write && eslint src --fix"
   },
