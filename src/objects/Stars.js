@@ -5,7 +5,7 @@ class Stars extends Points {
     const positions = [];
 
     for (let i = 0; i < count; i++) {
-      const r = 400;
+      const r = 4000;
       const theta = 2 * Math.PI * Math.random();
       const phi = Math.acos(2 * Math.random() - 1);
 

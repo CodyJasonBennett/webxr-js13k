@@ -18,7 +18,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "three": "0.131.3"
+    "three": "KodyJKing/three.js#3fd6975"
   },
   "scripts": {
     "start": "webpack serve --hot --open --port 80 --mode development",
