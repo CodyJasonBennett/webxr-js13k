@@ -102,7 +102,11 @@ class PostProcessing {
   }
 
   render() {
+    this.renderer.render(this.scene, this.camera);
+
     this.renderer.xr.enabled = false;
+
+    const currentRenderTarget = this.renderer.getRenderTarget();
 
     this.renderer.setRenderTarget(this.rgbRenderTarget);
     this.renderer.render(this.scene, this.camera);
@@ -118,7 +122,6 @@ class PostProcessing {
     uniforms.tDepth.value = this.rgbRenderTarget.depthTexture;
     uniforms.tNormal.value = this.normalRenderTarget.texture;
 
-    const currentRenderTarget = this.renderer.getRenderTarget();
     this.renderer.setRenderTarget(null);
     this.renderer.render(this.mesh, this.meshCamera);
     this.renderer.setRenderTarget(currentRenderTarget);

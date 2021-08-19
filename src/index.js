@@ -1,13 +1,5 @@
-import {
-  WebGLRenderer,
-  PerspectiveCamera,
-  Scene,
-  Color,
-  Fog,
-  AmbientLight,
-  Group,
-} from 'three';
-import WebXRManager from 'managers/WebXR';
+import { PerspectiveCamera, Scene, Color, Fog, AmbientLight, Group } from 'three';
+import WebGLRenderer from 'managers/WebGLRenderer';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';
@@ -23,7 +15,6 @@ renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
 if ('xr' in navigator) {
-  renderer.xr = new WebXRManager(renderer, renderer.getContext());
   renderer.xr.enabled = true;
 
   const onClick = async () => {
@@ -65,10 +56,10 @@ const xwing = new Model(xwingData);
 xwing.rotation.y = Math.PI;
 xwing.position.x = xwing.size.x / 2;
 xwing.position.y -= 8;
-player.add(xwing);
+// player.add(xwing);
 
 const tie = new Model(tieData);
-tie.position.z = 30;
+// tie.position.z = 30;
 scene.add(tie);
 
 const controls = new Controls(player, renderer.domElement);
@@ -100,6 +91,5 @@ renderer.setAnimationLoop(() => {
 
   scene.traverse(node => node.update?.());
 
-  // renderer.render(scene, camera);
   effects.render();
 });
