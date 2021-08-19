@@ -119,7 +119,7 @@ class WebXRManager extends EventDispatcher {
 
       // restore framebuffer/rendering state
 
-      renderer.getSize(currentSize);
+      renderer.setSize(currentSize);
 
       state.bindXRFramebuffer(null);
       renderer.setRenderTarget(renderer.getRenderTarget());
@@ -214,6 +214,7 @@ class WebXRManager extends EventDispatcher {
             framebufferScaleFactor: framebufferScaleFactor,
           };
 
+          // eslint-disable-next-line no-undef
           glBaseLayer = new XRWebGLLayer(session, gl, layerInit);
 
           session.updateRenderState({ baseLayer: glBaseLayer });
@@ -230,6 +231,7 @@ class WebXRManager extends EventDispatcher {
             framebufferScaleFactor: framebufferScaleFactor,
           };
 
+          // eslint-disable-next-line no-undef
           glBaseLayer = new XRWebGLLayer(session, gl, layerInit);
 
           session.updateRenderState({ layers: [glBaseLayer] });
@@ -254,6 +256,7 @@ class WebXRManager extends EventDispatcher {
             scaleFactor: framebufferScaleFactor,
           };
 
+          // eslint-disable-next-line no-undef
           glBinding = new XRWebGLBinding(session, gl);
 
           glProjLayer = glBinding.createProjectionLayer(projectionlayerInit);
