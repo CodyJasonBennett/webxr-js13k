@@ -111,54 +111,51 @@ class PostProcessing {
   }
 
   render() {
-    const size = this.renderer.getSize(new Vector2());
-    this.setSize(size.x, size.y);
-
     this.renderer.render(this.scene, this.camera);
 
-    let isXREnabled = this.renderer.xr.enabled;
-    if (isXREnabled) {
-      this.renderer.xr.enabled = false;
-    }
-
-    const currentRenderTarget = this.renderer.getRenderTarget();
-
-    this.renderer.setRenderTarget(this.rgbRenderTarget);
-    this.renderer.render(this.scene, this.camera);
-
-    const overrideMaterial_old = this.scene.overrideMaterial;
-    this.renderer.setRenderTarget(this.normalRenderTarget);
-    this.scene.overrideMaterial = this.normalMaterial;
-    this.renderer.render(this.scene, this.camera);
-    this.scene.overrideMaterial = overrideMaterial_old;
-
-    const uniforms = this.mesh.material.uniforms;
-    uniforms.tDiffuse.value = this.rgbRenderTarget.texture;
-    uniforms.tDepth.value = this.rgbRenderTarget.depthTexture;
-    uniforms.tNormal.value = this.normalRenderTarget.texture;
-
-    this.renderer.setRenderTarget(null);
-    this.renderer.render(this.mesh, this.meshCamera);
-    this.renderer.setRenderTarget(currentRenderTarget);
-
-    // if (this.renderer.xr.isPresenting) {
-    //   const { cameras } = this.renderer.xr.getCamera();
-
-    //   cameras.forEach(({ viewport }) => {
-    //     const { x, y, z: width, w: height } = viewport;
-
-    //     this.vrContext.drawImage(this.renderer.domElement, x, y, width, height);
-    //   });
-
-    //   this.vrMesh.material.map.image = this.vrCanvas;
-    //   this.vrMesh.material.map.needsUpdate = true;
-
-    //   this.renderer.setRenderTarget(null);
-    //   this.renderer.render(this.vrMesh, this.meshCamera);
-    //   this.renderer.setRenderTarget(currentRenderTarget);
+    // let isXREnabled = this.renderer.xr.enabled;
+    // if (isXREnabled) {
+    //   this.renderer.xr.enabled = false;
     // }
 
-    this.renderer.xr.enabled = isXREnabled;
+    // const currentRenderTarget = this.renderer.getRenderTarget();
+
+    // this.renderer.setRenderTarget(this.rgbRenderTarget);
+    // this.renderer.render(this.scene, this.camera);
+
+    // const overrideMaterial_old = this.scene.overrideMaterial;
+    // this.renderer.setRenderTarget(this.normalRenderTarget);
+    // this.scene.overrideMaterial = this.normalMaterial;
+    // this.renderer.render(this.scene, this.camera);
+    // this.scene.overrideMaterial = overrideMaterial_old;
+
+    // const uniforms = this.mesh.material.uniforms;
+    // uniforms.tDiffuse.value = this.rgbRenderTarget.texture;
+    // uniforms.tDepth.value = this.rgbRenderTarget.depthTexture;
+    // uniforms.tNormal.value = this.normalRenderTarget.texture;
+
+    // this.renderer.setRenderTarget(null);
+    // this.renderer.render(this.mesh, this.meshCamera);
+    // this.renderer.setRenderTarget(currentRenderTarget);
+
+    // // if (this.renderer.xr.isPresenting) {
+    // //   const { cameras } = this.renderer.xr.getCamera();
+
+    // //   cameras.forEach(({ viewport }) => {
+    // //     const { x, y, z: width, w: height } = viewport;
+
+    // //     this.vrContext.drawImage(this.renderer.domElement, x, y, width, height);
+    // //   });
+
+    // //   this.vrMesh.material.map.image = this.vrCanvas;
+    // //   this.vrMesh.material.map.needsUpdate = true;
+
+    // //   this.renderer.setRenderTarget(null);
+    // //   this.renderer.render(this.vrMesh, this.meshCamera);
+    // //   this.renderer.setRenderTarget(currentRenderTarget);
+    // // }
+
+    // this.renderer.xr.enabled = isXREnabled;
   }
 }
 
