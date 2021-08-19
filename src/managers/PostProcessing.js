@@ -111,6 +111,9 @@ class PostProcessing {
   }
 
   render() {
+    const size = this.renderer.getSize(new Vector2());
+    this.setSize(size.x, size.y);
+
     this.renderer.render(this.scene, this.camera);
 
     let isXREnabled = this.renderer.xr.enabled;
