@@ -1,5 +1,5 @@
 import { PerspectiveCamera, Scene, Color, Fog, AmbientLight, Group } from 'three';
-import WebGLRenderer from 'managers/WebGLRenderer';
+import { WebGLRenderer } from 'vendored/WebGLRenderer';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';

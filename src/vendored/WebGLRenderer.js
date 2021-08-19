@@ -42,7 +42,7 @@ import { WebGLState } from 'three/src/renderers/webgl/WebGLState.js';
 import { WebGLTextures } from 'three/src/renderers/webgl/WebGLTextures.js';
 import { WebGLUniforms } from 'three/src/renderers/webgl/WebGLUniforms.js';
 import { WebGLUtils } from 'three/src/renderers/webgl/WebGLUtils.js';
-import WebXRManager from './WebXR.js';
+import { WebXRManager } from './WebXRManager.js';
 import { WebGLMaterials } from 'three/src/renderers/webgl/WebGLMaterials.js';
 
 function createCanvasElement() {
@@ -2041,4 +2041,4 @@ function WebGLRenderer(parameters = {}) {
   }
 }
 
-export default WebGLRenderer;
+export { WebGLRenderer };

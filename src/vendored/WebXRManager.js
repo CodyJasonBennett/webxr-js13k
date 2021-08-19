@@ -1,11 +1,11 @@
 import { ArrayCamera } from 'three/src/cameras/ArrayCamera.js';
 import { EventDispatcher } from 'three/src/core/EventDispatcher.js';
+import { Vector2 } from 'three/src/math/Vector2.js';
 import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera.js';
 import { Vector3 } from 'three/src/math/Vector3.js';
 import { Vector4 } from 'three/src/math/Vector4.js';
 import { WebGLAnimation } from 'three/src/renderers/webgl/WebGLAnimation.js';
 import { WebXRController } from 'three/src/renderers/webxr/WebXRController.js';
-import { Vector2 } from 'three';
 
 class WebXRManager extends EventDispatcher {
   constructor(renderer, gl) {
@@ -543,4 +543,4 @@ class WebXRManager extends EventDispatcher {
   }
 }
 
-export default WebXRManager;
+export { WebXRManager };
