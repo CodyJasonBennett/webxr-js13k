@@ -12,6 +12,8 @@ import {
   RGBAFormat,
   RGBFormat,
   MeshNormalMaterial,
+  MeshBasicMaterial,
+  Texture,
 } from 'three';
 import vertexShader from 'shaders/vert';
 import fragmentShader from 'shaders/frag';
@@ -74,6 +76,10 @@ class PostProcessing {
     this.mesh = new Mesh(geometry, material);
     this.meshCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
+    this.vrMesh = new Mesh(geometry, new MeshBasicMaterial({ map: new Texture() }));
+    this.vrCanvas = document.createElement('canvas');
+    this.vrContext = this.vrCanvas.getContext('2d');
+
     this.rgbRenderTarget = pixelRenderTarget(this.renderResolution, RGBAFormat, true);
     this.normalRenderTarget = pixelRenderTarget(this.renderResolution, RGBFormat, false);
 
@@ -93,6 +99,9 @@ class PostProcessing {
   setSize(width, height) {
     this.writeBuffer.setSize(width, height);
 
+    this.vrCanvas.width = width;
+    this.vrCanvas.height = height;
+
     const [x, y] = [(width / PIXEL_SIZE) | 0, (height / PIXEL_SIZE) | 0];
     this.renderResolution.set(x, y);
 
@@ -104,7 +113,10 @@ class PostProcessing {
   render() {
     this.renderer.render(this.scene, this.camera);
 
-    this.renderer.xr.enabled = false;
+    let isXREnabled = this.renderer.xr.enabled;
+    if (isXREnabled) {
+      this.renderer.xr.enabled = false;
+    }
 
     const currentRenderTarget = this.renderer.getRenderTarget();
 
@@ -126,7 +138,24 @@ class PostProcessing {
     this.renderer.render(this.mesh, this.meshCamera);
     this.renderer.setRenderTarget(currentRenderTarget);
 
-    this.renderer.xr.enabled = true;
+    if (this.renderer.xr.isPresenting) {
+      const { cameras } = this.renderer.xr.getCamera();
+
+      cameras.forEach(({ viewport }) => {
+        const { x, y, z: width, w: height } = viewport;
+
+        this.vrContext.drawImage(this.renderer.domElement, x, y, width, height);
+      });
+
+      this.vrMesh.material.map.image = this.vrCanvas;
+      this.vrMesh.material.map.needsUpdate = true;
+
+      this.renderer.setRenderTarget(null);
+      this.renderer.render(this.vrMesh, this.meshCamera);
+      this.renderer.setRenderTarget(currentRenderTarget);
+    }
+
+    this.renderer.xr.enabled = isXREnabled;
   }
 }
 
