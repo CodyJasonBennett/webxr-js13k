@@ -1,12 +1,5 @@
-import {
-  WebGLRenderer,
-  PerspectiveCamera,
-  Scene,
-  Color,
-  Fog,
-  AmbientLight,
-  Group,
-} from 'three';
+import { PerspectiveCamera, Scene, Color, Fog, AmbientLight, Group } from 'three';
+import Renderer from 'managers/Renderer';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';
@@ -17,7 +10,7 @@ import tieData from 'assets/tie';
 
 const { innerWidth, innerHeight } = window;
 
-const renderer = new WebGLRenderer();
+const renderer = new Renderer();
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
