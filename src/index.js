@@ -33,7 +33,7 @@ if ('xr' in navigator) {
     if (!supportsVR) return renderer.domElement.requestPointerLock();
 
     const session = await navigator.xr.requestSession('immersive-vr', {
-      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking'],
+      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
     });
     await renderer.xr.setSession(session);
   };
@@ -85,6 +85,10 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
+scene.onAfterRender = () => {
+  effects.render();
+};
+
 renderer.setAnimationLoop(() => {
   // Animate FOV when boosting
   if (controls.boosted && camera.fov < 80) {
@@ -101,5 +105,4 @@ renderer.setAnimationLoop(() => {
   scene.traverse(node => node.update?.());
 
   renderer.render(scene, camera);
-  effects.render();
 });
