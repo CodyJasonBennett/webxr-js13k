@@ -33,7 +33,7 @@ if ('xr' in navigator) {
 }
 
 const camera = new PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 50000);
-camera.position.z = 20;
+camera.position.z = 40;
 
 const scene = new Scene();
 scene.background = new Color(0x020209);
@@ -59,7 +59,7 @@ xwing.position.y -= 8;
 player.add(xwing);
 
 const tie = new Model(tieData);
-tie.position.z = 25;
+tie.position.z = 30;
 scene.add(tie);
 
 const controls = new Controls(player, renderer.domElement);
