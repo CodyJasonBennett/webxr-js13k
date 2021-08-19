@@ -27,7 +27,7 @@ if ('xr' in navigator) {
   renderer.xr.enabled = true;
 
   const onClick = async () => {
-    document.body.addEventListener('click', onClick);
+    document.body.removeEventListener('click', onClick);
 
     const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
     if (!supportsVR) return renderer.domElement.requestPointerLock();
