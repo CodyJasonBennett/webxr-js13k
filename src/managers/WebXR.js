@@ -218,7 +218,11 @@ class WebXRManager extends EventDispatcher {
           glBaseLayer = new XRWebGLLayer(session, gl, layerInit);
 
           session.updateRenderState({ baseLayer: glBaseLayer });
-          renderer.setSize(glBaseLayer.framebufferWidth, glBaseLayer.framebufferHeight);
+          renderer.setDrawingBufferSize(
+            glBaseLayer.framebufferWidth,
+            glBaseLayer.framebufferHeight,
+            1
+          );
         } else if (gl instanceof WebGLRenderingContext) {
           // Use old style webgl layer because we can't use MSAA
           // WebGL2 support.
