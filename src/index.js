@@ -7,7 +7,6 @@ import {
   AmbientLight,
   Group,
 } from 'three';
-import { VRButton } from 'three/examples/jsm/webxr/VRButton';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';
@@ -24,7 +23,20 @@ document.body.appendChild(renderer.domElement);
 
 if ('xr' in navigator) {
   renderer.xr.enabled = true;
-  document.body.appendChild(VRButton.createButton(renderer));
+
+  const onClick = async () => {
+    document.body.addEventListener('click', onClick);
+
+    const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
+    if (!supportsVR) return renderer.domElement.requestPointerLock();
+
+    const session = await navigator.xr.requestSession('immersive-vr', {
+      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking'],
+    });
+    await renderer.xr.setSession(session);
+  };
+
+  document.body.addEventListener('click', onClick);
 }
 
 const camera = new PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 50000);
@@ -71,12 +83,6 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
-const handleLock = () => {
-  renderer.domElement.requestPointerLock();
-  document.body.addEventListener('click', handleLock);
-};
-document.body.addEventListener('click', handleLock);
-
 renderer.setAnimationLoop(() => {
   // Animate FOV when boosting
   if (controls.boosted && camera.fov < 80) {
@@ -92,6 +98,6 @@ renderer.setAnimationLoop(() => {
 
   scene.traverse(node => node.update?.());
 
-  // renderer.render(scene, camera);
+  renderer.render(scene, camera);
   effects.render();
 });
