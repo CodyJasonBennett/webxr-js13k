@@ -42,7 +42,7 @@ import { WebGLState } from 'three/src/renderers/webgl/WebGLState.js';
 import { WebGLTextures } from 'three/src/renderers/webgl/WebGLTextures.js';
 import { WebGLUniforms } from 'three/src/renderers/webgl/WebGLUniforms.js';
 import { WebGLUtils } from 'three/src/renderers/webgl/WebGLUtils.js';
-import { WebXRManager } from './WebXRManager.js';
+import { WebXRManager } from 'vendored/WebXRManager';
 import { WebGLMaterials } from 'three/src/renderers/webgl/WebGLMaterials.js';
 
 function createCanvasElement() {
@@ -826,6 +826,13 @@ function WebGLRenderer(parameters = {}) {
   // Rendering
 
   this.render = function (scene, camera) {
+    if (camera !== undefined && camera.isCamera !== true) {
+      console.error(
+        'THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.'
+      );
+      return;
+    }
+
     if (_isContextLost === true) return;
 
     // update scene graph

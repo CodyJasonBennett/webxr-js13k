@@ -24,7 +24,7 @@ if ('xr' in navigator) {
     if (!supportsVR) return renderer.domElement.requestPointerLock();
 
     const session = await navigator.xr.requestSession('immersive-vr', {
-      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
+      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking'],
     });
     await renderer.xr.setSession(session);
   };
