@@ -6,6 +6,8 @@ import { Vector3 } from 'three/src/math/Vector3.js';
 import { Vector4 } from 'three/src/math/Vector4.js';
 import { WebGLAnimation } from 'three/src/renderers/webgl/WebGLAnimation.js';
 import { WebXRController } from 'three/src/renderers/webxr/WebXRController.js';
+import { XRWebGLLayer } from 'three';
+import { XRWebGLBinding } from 'three';
 
 class WebXRManager extends EventDispatcher {
   constructor(renderer, gl) {
