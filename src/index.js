@@ -85,10 +85,6 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
-scene.onAfterRender = () => {
-  effects.render();
-};
-
 renderer.setAnimationLoop(() => {
   // Animate FOV when boosting
   if (controls.boosted && camera.fov < 80) {
@@ -104,5 +100,6 @@ renderer.setAnimationLoop(() => {
 
   scene.traverse(node => node.update?.());
 
-  renderer.render(scene, camera);
+  // renderer.render(scene, camera);
+  effects.render();
 });
