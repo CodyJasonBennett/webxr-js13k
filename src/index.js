@@ -1,5 +1,13 @@
-import { PerspectiveCamera, Scene, Color, Fog, AmbientLight, Group } from 'three';
-import Renderer from 'managers/Renderer';
+import {
+  WebGLRenderer,
+  PerspectiveCamera,
+  Scene,
+  Color,
+  Fog,
+  AmbientLight,
+  Group,
+} from 'three';
+import WebXRManager from 'managers/WebXR';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';
@@ -10,11 +18,12 @@ import tieData from 'assets/tie';
 
 const { innerWidth, innerHeight } = window;
 
-const renderer = new Renderer();
+const renderer = new WebGLRenderer();
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
 if ('xr' in navigator) {
+  renderer.xr = new WebXRManager(renderer, renderer.getContext());
   renderer.xr.enabled = true;
 
   const onClick = async () => {
