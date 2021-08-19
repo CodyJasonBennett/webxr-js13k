@@ -11,38 +11,38 @@ import {
   LinearMipmapLinearFilter,
   NearestFilter,
   ClampToEdgeWrapping,
-  Frustum,
-  Matrix4,
-  Vector3,
-  Vector4,
-  WebGLAnimation,
-  WebGLAttributes,
-  WebGLBackground,
-  WebGLBindingStates,
-  WebGLBufferRenderer,
-  WebGLCapabilities,
-  WebGLClipping,
-  WebGLCubeMaps,
-  WebGLCubeUVMaps,
-  WebGLExtensions,
-  WebGLGeometries,
-  WebGLIndexedBufferRenderer,
-  WebGLInfo,
-  WebGLMorphtargets,
-  WebGLMultisampleRenderTarget,
-  WebGLObjects,
-  WebGLPrograms,
-  WebGLProperties,
-  WebGLRenderLists,
-  WebGLRenderStates,
-  WebGLRenderTarget,
-  WebGLShadowMap,
-  WebGLState,
-  WebGLTextures,
-  WebGLUniforms,
-  WebGLUtils,
-  WebGLMaterials,
-} from 'three';
+} from 'three/src/constants.js';
+import { Frustum } from 'three/src/math/Frustum.js';
+import { Matrix4 } from 'three/src/math/Matrix4.js';
+import { Vector3 } from 'three/src/math/Vector3.js';
+import { Vector4 } from 'three/src/math/Vector4.js';
+import { WebGLAnimation } from 'three/src/renderers/webgl/WebGLAnimation.js';
+import { WebGLAttributes } from 'three/src/renderers/webgl/WebGLAttributes.js';
+import { WebGLBackground } from 'three/src/renderers/webgl/WebGLBackground.js';
+import { WebGLBindingStates } from 'three/src/renderers/webgl/WebGLBindingStates.js';
+import { WebGLBufferRenderer } from 'three/src/renderers/webgl/WebGLBufferRenderer.js';
+import { WebGLCapabilities } from 'three/src/renderers/webgl/WebGLCapabilities.js';
+import { WebGLClipping } from 'three/src/renderers/webgl/WebGLClipping.js';
+import { WebGLCubeMaps } from 'three/src/renderers/webgl/WebGLCubeMaps.js';
+import { WebGLCubeUVMaps } from 'three/src/renderers/webgl/WebGLCubeUVMaps.js';
+import { WebGLExtensions } from 'three/src/renderers/webgl/WebGLExtensions.js';
+import { WebGLGeometries } from 'three/src/renderers/webgl/WebGLGeometries.js';
+import { WebGLIndexedBufferRenderer } from 'three/src/renderers/webgl/WebGLIndexedBufferRenderer.js';
+import { WebGLInfo } from 'three/src/renderers/webgl/WebGLInfo.js';
+import { WebGLMorphtargets } from 'three/src/renderers/webgl/WebGLMorphtargets.js';
+import { WebGLMultisampleRenderTarget } from 'three/src/renderers/WebGLMultisampleRenderTarget.js';
+import { WebGLObjects } from 'three/src/renderers/webgl/WebGLObjects.js';
+import { WebGLPrograms } from 'three/src/renderers/webgl/WebGLPrograms.js';
+import { WebGLProperties } from 'three/src/renderers/webgl/WebGLProperties.js';
+import { WebGLRenderLists } from 'three/src/renderers/webgl/WebGLRenderLists.js';
+import { WebGLRenderStates } from 'three/src/renderers/webgl/WebGLRenderStates.js';
+import { WebGLRenderTarget } from 'three/src/renderers/WebGLRenderTarget.js';
+import { WebGLShadowMap } from 'three/src/renderers/webgl/WebGLShadowMap.js';
+import { WebGLState } from 'three/src/renderers/webgl/WebGLState.js';
+import { WebGLTextures } from 'three/src/renderers/webgl/WebGLTextures.js';
+import { WebGLUniforms } from 'three/src/renderers/webgl/WebGLUniforms.js';
+import { WebGLUtils } from 'three/src/renderers/webgl/WebGLUtils.js';
+import { WebGLMaterials } from 'three/src/renderers/webgl/WebGLMaterials.js';
 import WebXR from 'managers/WebXR';
 
 function createCanvasElement() {

@@ -1,15 +1,11 @@
-import {
-  EventDispatcher,
-  Vector2,
-  ArrayCamera,
-  PerspectiveCamera,
-  Vector3,
-  Vector4,
-  WebGLAnimation,
-  WebXRController,
-  XRWebGLLayer,
-  XRWebGLBinding,
-} from 'three';
+import { Vector2 } from 'three';
+import { ArrayCamera } from 'three/src/cameras/ArrayCamera.js';
+import { EventDispatcher } from 'three/src/core/EventDispatcher.js';
+import { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera.js';
+import { Vector3 } from 'three/src/math/Vector3.js';
+import { Vector4 } from 'three/src/math/Vector4.js';
+import { WebGLAnimation } from 'three/src/renderers/webgl/WebGLAnimation.js';
+import { WebXRController } from 'three/src/renderers/webxr/WebXRController.js';
 
 class WebXRManager extends EventDispatcher {
   constructor(renderer, gl) {
