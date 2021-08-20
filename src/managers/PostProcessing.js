@@ -12,8 +12,6 @@ import {
   RGBAFormat,
   RGBFormat,
   MeshNormalMaterial,
-  MeshBasicMaterial,
-  Texture,
 } from 'three';
 import vertexShader from 'shaders/vert';
 import fragmentShader from 'shaders/frag';
@@ -54,6 +52,7 @@ class PostProcessing {
         tDiffuse: { value: null },
         tDepth: { value: null },
         tNormal: { value: null },
+        scaleX: { type: 'f', value: 1.0 },
         resolution: {
           value: new Vector4(
             this.renderResolution.x,
@@ -74,10 +73,6 @@ class PostProcessing {
     geometry.setAttribute('uv', new Float32BufferAttribute([0, 2, 0, 0, 2, 0], 2));
     this.mesh = new Mesh(geometry, material);
     this.meshCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-    this.vrMesh = new Mesh(geometry, new MeshBasicMaterial({ map: new Texture() }));
-    this.vrCanvas = document.createElement('canvas');
-    this.vrContext = this.vrCanvas.getContext('2d');
 
     this.rgbRenderTarget = pixelRenderTarget(this.renderResolution, RGBAFormat, true);
     this.normalRenderTarget = pixelRenderTarget(this.renderResolution, RGBFormat, false);
@@ -103,9 +98,6 @@ class PostProcessing {
   }
 
   setSize(width, height) {
-    this.vrCanvas.width = width;
-    this.vrCanvas.height = height;
-
     const [x, y] = [(width / PIXEL_SIZE) | 0, (height / PIXEL_SIZE) | 0];
     this.renderResolution.set(x, y);
 
@@ -122,6 +114,9 @@ class PostProcessing {
       this.renderer.xr.enabled = false;
     }
 
+    const uniforms = this.mesh.material.uniforms;
+    uniforms.scaleX.value = this.renderer.xr.isPresenting ? 2.0 : 1.0;
+
     this.renderer.setRenderTarget(this.rgbRenderTarget);
     this.renderer.render(this.scene, this.camera);
 
@@ -131,13 +126,11 @@ class PostProcessing {
     this.renderer.render(this.scene, this.camera);
     this.scene.overrideMaterial = overrideMaterial_old;
 
-    const uniforms = this.mesh.material.uniforms;
     uniforms.tDiffuse.value = this.rgbRenderTarget.texture;
     uniforms.tDepth.value = this.rgbRenderTarget.depthTexture;
     uniforms.tNormal.value = this.normalRenderTarget.texture;
 
     this.renderer.setRenderTarget(null);
-    this.renderer.render(this.mesh, this.meshCamera);
 
     if (this.renderer.xr.isPresenting) {
       const { cameras } = this.renderer.xr.getCamera();
@@ -145,27 +138,14 @@ class PostProcessing {
       cameras.forEach(camera => {
         const [x, y, width, height] = camera.viewport.toArray();
 
-        // Crop to prevent distortion
-        const sx = (this.renderer.domElement.width - width) / 2;
-        const sy = (this.renderer.domElement.height - height) / 2;
+        this.renderer.setViewport(x, y, width, height);
+        this.renderer.setScissor(x, y, width, height);
+        this.renderer.setScissorTest(true);
 
-        this.vrContext.drawImage(
-          this.renderer.domElement,
-          sx,
-          sy,
-          width,
-          height,
-          x,
-          y,
-          width,
-          height
-        );
+        this.renderer.render(this.mesh, this.meshCamera);
       });
-
-      this.vrMesh.material.map.image = this.vrCanvas;
-      this.vrMesh.material.map.needsUpdate = true;
-
-      this.renderer.render(this.vrMesh, this.meshCamera);
+    } else {
+      this.renderer.render(this.mesh, this.meshCamera);
     }
 
     this.renderer.xr.enabled = isXREnabled;
