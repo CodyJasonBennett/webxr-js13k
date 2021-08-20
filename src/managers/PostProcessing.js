@@ -89,8 +89,9 @@ class PostProcessing {
     this.renderer.getSize(this.currentSize);
 
     const onSessionStart = () => {
-      const { context } = this.renderer.xr.getBaseLayer();
-      const { drawingBufferWidth, drawingBufferHeight } = context;
+      const baseLayer = this.renderer.xr.getBaseLayer();
+      console.log(baseLayer);
+      const { drawingBufferWidth, drawingBufferHeight } = baseLayer.context;
 
       this.renderer.setDrawingBufferSize(drawingBufferWidth, drawingBufferHeight, 1);
       this.setSize(drawingBufferWidth, drawingBufferHeight);
