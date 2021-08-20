@@ -1,5 +1,13 @@
-import { PerspectiveCamera, Scene, Color, Fog, AmbientLight, Group } from 'three';
-import { WebGLRenderer } from 'vendored/WebGLRenderer';
+import {
+  WebGLRenderer,
+  PerspectiveCamera,
+  Scene,
+  Color,
+  Fog,
+  AmbientLight,
+  Group,
+  Vector2,
+} from 'three';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';
@@ -13,24 +21,6 @@ const { innerWidth, innerHeight } = window;
 const renderer = new WebGLRenderer();
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
-
-if ('xr' in navigator) {
-  renderer.xr.enabled = true;
-
-  const onClick = async () => {
-    document.body.removeEventListener('click', onClick);
-
-    const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
-    if (!supportsVR) return renderer.domElement.requestPointerLock();
-
-    const session = await navigator.xr.requestSession('immersive-vr', {
-      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking'],
-    });
-    await renderer.xr.setSession(session);
-  };
-
-  document.body.addEventListener('click', onClick);
-}
 
 const camera = new PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 50000);
 camera.position.z = 40;
@@ -93,3 +83,37 @@ renderer.setAnimationLoop(() => {
 
   effects.render();
 });
+
+if ('xr' in navigator) {
+  const currentSize = new Vector2();
+  renderer.getSize(currentSize);
+
+  renderer.xr.enabled = true;
+
+  const onSessionStart = () => {
+    const baseLayer = renderer.xr.getBaseLayer();
+    renderer.setSize(baseLayer.framebufferWidth, baseLayer.framebufferHeight);
+    effects.setSize(baseLayer.framebufferWidth, baseLayer.framebufferHeight);
+  };
+
+  const onSessionEnd = () => {
+    renderer.setSize(currentSize);
+  };
+
+  const onClick = async () => {
+    document.body.removeEventListener('click', onClick);
+
+    const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
+    if (!supportsVR) return renderer.domElement.requestPointerLock();
+
+    renderer.xr.addEventListener('sessionstart', onSessionStart);
+    renderer.xr.addEventListener('sessionend', onSessionEnd);
+
+    const session = await navigator.xr.requestSession('immersive-vr', {
+      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking'],
+    });
+    await renderer.xr.setSession(session);
+  };
+
+  document.body.addEventListener('click', onClick);
+}

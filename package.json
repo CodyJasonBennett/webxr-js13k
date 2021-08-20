@@ -18,7 +18,7 @@
     "webpack-dev-server": "^4.0.0"
   },
   "dependencies": {
-    "three": "^0.131.3"
+    "three": "mrdoob/three.js"
   },
   "scripts": {
     "start": "webpack serve --hot --open --port 80 --mode development",
