@@ -1,13 +1,5 @@
-import {
-  WebGLRenderer,
-  PerspectiveCamera,
-  Scene,
-  Color,
-  Fog,
-  AmbientLight,
-  Group,
-  Vector2,
-} from 'three';
+import { PerspectiveCamera, Scene, Color, Fog, AmbientLight, Group } from 'three';
+import { WebGLRenderer } from 'vendored/WebGLRenderer';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';
@@ -21,6 +13,24 @@ const { innerWidth, innerHeight } = window;
 const renderer = new WebGLRenderer();
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
+
+if ('xr' in navigator) {
+  renderer.xr.enabled = true;
+
+  const onClick = async () => {
+    document.body.removeEventListener('click', onClick);
+
+    const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
+    if (!supportsVR) return renderer.domElement.requestPointerLock();
+
+    const session = await navigator.xr.requestSession('immersive-vr', {
+      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking'],
+    });
+    await renderer.xr.setSession(session);
+  };
+
+  document.body.addEventListener('click', onClick);
+}
 
 const camera = new PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 50000);
 camera.position.z = 40;
@@ -83,21 +93,3 @@ renderer.setAnimationLoop(() => {
 
   effects.render();
 });
-
-if ('xr' in navigator) {
-  renderer.xr.enabled = true;
-
-  const onClick = async () => {
-    document.body.removeEventListener('click', onClick);
-
-    const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
-    if (!supportsVR) return renderer.domElement.requestPointerLock();
-
-    const session = await navigator.xr.requestSession('immersive-vr', {
-      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
-    });
-    await renderer.xr.setSession(session);
-  };
-
-  document.body.addEventListener('click', onClick);
-}
