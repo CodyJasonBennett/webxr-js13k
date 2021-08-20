@@ -153,7 +153,7 @@ class PostProcessing {
     //   this.renderer.setRenderTarget(currentRenderTarget);
     // }
 
-    this.renderer.xr.enabled = isXREnabled;
+    // this.renderer.xr.enabled = isXREnabled;
   }
 }
 
