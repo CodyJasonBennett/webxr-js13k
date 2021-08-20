@@ -146,20 +146,21 @@ class PostProcessing {
     this.renderer.render(this.mesh, this.meshCamera);
     this.renderer.setRenderTarget(currentRenderTarget);
 
-    // if (this.renderer.xr.isPresenting) {
-    //   const { cameras } = this.renderer.xr.getCamera();
+    if (this.renderer.xr.isPresenting) {
+      const { cameras } = this.renderer.xr.getCamera();
 
-    //   cameras.forEach(camera => {
-    //     this.vrContext.drawImage(this.renderer.domElement, ...camera.viewport.toArray());
-    //   });
+      cameras.forEach(camera => {
+        this.vrContext.drawImage(this.renderer.domElement, ...camera.viewport.toArray());
+      });
 
-    //   this.vrMesh.material.map.image = this.vrCanvas;
-    //   this.vrMesh.material.map.needsUpdate = true;
+      this.vrMesh.material.map.image = this.vrCanvas;
+      this.vrMesh.material.map.needsUpdate = true;
+      this.vrMesh.material.needsUpdate = true;
 
-    //   this.renderer.setRenderTarget(null);
-    //   this.renderer.render(this.vrMesh, this.meshCamera);
-    //   this.renderer.setRenderTarget(currentRenderTarget);
-    // }
+      this.renderer.setRenderTarget(null);
+      this.renderer.render(this.vrMesh, this.meshCamera);
+      this.renderer.setRenderTarget(currentRenderTarget);
+    }
 
     this.renderer.xr.enabled = isXREnabled;
   }
