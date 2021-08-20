@@ -135,11 +135,14 @@ class PostProcessing {
     if (this.renderer.xr.isPresenting) {
       const { cameras } = this.renderer.xr.getCamera();
 
-      cameras.forEach(camera => {
+      cameras.forEach((camera, index) => {
         const [x, y, width, height] = camera.viewport.toArray();
 
-        this.renderer.setViewport(x, y, width, height);
-        this.renderer.setScissor(x, y, width, height);
+        // Manually offset each eye to account for IPD
+        const offset = index ? -100 : 100;
+
+        this.renderer.setViewport(x + offset, y, width, height);
+        this.renderer.setScissor(x + offset, y, width, height);
         this.renderer.setScissorTest(true);
 
         this.renderer.render(this.mesh, this.meshCamera);
