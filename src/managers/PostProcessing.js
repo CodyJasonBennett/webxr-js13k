@@ -85,18 +85,31 @@ class PostProcessing {
 
     this.normalMaterial = new MeshNormalMaterial();
 
-    const onSessionStateChange = () => {
-      const rendererSize = new Vector2();
-      this.renderer.getSize(rendererSize);
+    this.currentSize = new Vector2();
+    this.renderer.getSize(this.currentSize);
 
-      this.setSize(rendererSize.x, rendererSize.y);
+    const onSessionStart = () => {
+      const baseLayer = this.renderer.xr.getBaseLayer();
+      this.renderer.setDrawingBufferSize(
+        baseLayer.framebufferWidth,
+        baseLayer.framebufferHeight,
+        1
+      );
     };
 
-    this.renderer.xr.addEventListener('sessionstart', onSessionStateChange);
-    this.renderer.xr.addEventListener('sessionend', onSessionStateChange);
+    const onSessionEnd = () => {
+      this.renderer.setSize(this.currentSize.x, this.currentSize.y);
+      this.setSize(this.currentSize.x, this.currentSize.y);
+    };
+
+    this.renderer.xr.addEventListener('sessionstart', onSessionStart);
+    this.renderer.xr.addEventListener('sessionend', onSessionEnd);
   }
 
   setSize(width, height) {
+    this.renderer.setSize(width, height);
+    this.renderer.getSize(this.currentSize);
+
     this.writeBuffer.setSize(width, height);
 
     this.vrCanvas.width = width;
@@ -118,40 +131,40 @@ class PostProcessing {
       this.renderer.xr.enabled = false;
     }
 
-    // const currentRenderTarget = this.renderer.getRenderTarget();
+    const currentRenderTarget = this.renderer.getRenderTarget();
 
-    // this.renderer.setRenderTarget(this.rgbRenderTarget);
-    // this.renderer.render(this.scene, this.camera);
+    this.renderer.setRenderTarget(this.rgbRenderTarget);
+    this.renderer.render(this.scene, this.camera);
 
-    // const overrideMaterial_old = this.scene.overrideMaterial;
-    // this.renderer.setRenderTarget(this.normalRenderTarget);
-    // this.scene.overrideMaterial = this.normalMaterial;
-    // this.renderer.render(this.scene, this.camera);
-    // this.scene.overrideMaterial = overrideMaterial_old;
+    const overrideMaterial_old = this.scene.overrideMaterial;
+    this.renderer.setRenderTarget(this.normalRenderTarget);
+    this.scene.overrideMaterial = this.normalMaterial;
+    this.renderer.render(this.scene, this.camera);
+    this.scene.overrideMaterial = overrideMaterial_old;
 
-    // const uniforms = this.mesh.material.uniforms;
-    // uniforms.tDiffuse.value = this.rgbRenderTarget.texture;
-    // uniforms.tDepth.value = this.rgbRenderTarget.depthTexture;
-    // uniforms.tNormal.value = this.normalRenderTarget.texture;
+    const uniforms = this.mesh.material.uniforms;
+    uniforms.tDiffuse.value = this.rgbRenderTarget.texture;
+    uniforms.tDepth.value = this.rgbRenderTarget.depthTexture;
+    uniforms.tNormal.value = this.normalRenderTarget.texture;
 
-    // this.renderer.setRenderTarget(null);
-    // this.renderer.render(this.mesh, this.meshCamera);
-    // this.renderer.setRenderTarget(currentRenderTarget);
+    this.renderer.setRenderTarget(null);
+    this.renderer.render(this.mesh, this.meshCamera);
+    this.renderer.setRenderTarget(currentRenderTarget);
 
-    // if (this.renderer.xr.isPresenting) {
-    //   const { cameras } = this.renderer.xr.getCamera();
+    if (this.renderer.xr.isPresenting) {
+      const { cameras } = this.renderer.xr.getCamera();
 
-    //   cameras.forEach(camera => {
-    //     this.vrContext.drawImage(this.renderer.domElement, ...camera.viewport.toArray());
-    //   });
+      cameras.forEach(camera => {
+        this.vrContext.drawImage(this.renderer.domElement, ...camera.viewport.toArray());
+      });
 
-    //   this.vrMesh.material.map.image = this.vrCanvas;
-    //   this.vrMesh.material.map.needsUpdate = true;
+      this.vrMesh.material.map.image = this.vrCanvas;
+      this.vrMesh.material.map.needsUpdate = true;
 
-    //   this.renderer.setRenderTarget(null);
-    //   this.renderer.render(this.vrMesh, this.meshCamera);
-    //   this.renderer.setRenderTarget(currentRenderTarget);
-    // }
+      this.renderer.setRenderTarget(null);
+      this.renderer.render(this.vrMesh, this.meshCamera);
+      this.renderer.setRenderTarget(currentRenderTarget);
+    }
 
     this.renderer.xr.enabled = isXREnabled;
   }

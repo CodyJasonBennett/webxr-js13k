@@ -1,5 +1,12 @@
-import { PerspectiveCamera, Scene, Color, Fog, AmbientLight, Group } from 'three';
-import { WebGLRenderer } from 'vendored/WebGLRenderer';
+import {
+  WebGLRenderer,
+  PerspectiveCamera,
+  Scene,
+  Color,
+  Fog,
+  AmbientLight,
+  Group,
+} from 'three';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';
@@ -69,7 +76,6 @@ const audio = new Audio();
 window.addEventListener('resize', () => {
   const { innerWidth, innerHeight } = window;
 
-  renderer.setSize(innerWidth, innerHeight);
   effects.setSize(innerWidth, innerHeight);
 
   camera.aspect = innerWidth / innerHeight;
