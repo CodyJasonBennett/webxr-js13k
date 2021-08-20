@@ -12,6 +12,8 @@ import {
   RGBAFormat,
   RGBFormat,
   MeshNormalMaterial,
+  MeshBasicMaterial,
+  Texture,
 } from 'three';
 import vertexShader from 'shaders/vert';
 import fragmentShader from 'shaders/frag';
@@ -74,14 +76,41 @@ class PostProcessing {
     this.mesh = new Mesh(geometry, material);
     this.meshCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
+    this.vrMesh = new Mesh(geometry, new MeshBasicMaterial({ map: new Texture() }));
+    this.vrCanvas = document.createElement('canvas');
+    this.vrContext = this.vrCanvas.getContext('2d');
+
     this.rgbRenderTarget = pixelRenderTarget(this.renderResolution, RGBAFormat, true);
     this.normalRenderTarget = pixelRenderTarget(this.renderResolution, RGBFormat, false);
 
     this.normalMaterial = new MeshNormalMaterial();
+
+    this.currentSize = new Vector2();
+    this.renderer.getSize(this.currentSize);
+
+    const onSessionStart = () => {
+      const baseLayer = this.renderer.xr.getBaseLayer();
+      const width = baseLayer.context?.drawingBufferWidth || baseLayer.textureWidth;
+      const height = baseLayer.context?.drawingBufferHeight || baseLayer.textureHeight;
+
+      this.renderer.setDrawingBufferSize(width, height, 1);
+      this.setSize(width, height);
+    };
+
+    const onSessionEnd = () => {
+      this.renderer.setSize(this.currentSize.x, this.currentSize.y);
+      this.setSize(this.currentSize.x, this.currentSize.y);
+    };
+
+    this.renderer.xr.addEventListener('sessionstart', onSessionStart);
+    this.renderer.xr.addEventListener('sessionend', onSessionEnd);
   }
 
   setSize(width, height) {
     this.writeBuffer.setSize(width, height);
+
+    this.vrCanvas.width = width;
+    this.vrCanvas.height = height;
 
     const [x, y] = [(width / PIXEL_SIZE) | 0, (height / PIXEL_SIZE) | 0];
     this.renderResolution.set(x, y);
@@ -92,6 +121,15 @@ class PostProcessing {
   }
 
   render() {
+    this.renderer.render(this.scene, this.camera);
+
+    let isXREnabled = this.renderer.xr.enabled;
+    if (isXREnabled) {
+      this.renderer.xr.enabled = false;
+    }
+
+    const currentRenderTarget = this.renderer.getRenderTarget();
+
     this.renderer.setRenderTarget(this.rgbRenderTarget);
     this.renderer.render(this.scene, this.camera);
 
@@ -106,10 +144,26 @@ class PostProcessing {
     uniforms.tDepth.value = this.rgbRenderTarget.depthTexture;
     uniforms.tNormal.value = this.normalRenderTarget.texture;
 
-    const currentRenderTarget = this.renderer.getRenderTarget();
     this.renderer.setRenderTarget(null);
     this.renderer.render(this.mesh, this.meshCamera);
     this.renderer.setRenderTarget(currentRenderTarget);
+
+    // if (this.renderer.xr.isPresenting) {
+    //   const { cameras } = this.renderer.xr.getCamera();
+
+    //   cameras.forEach(camera => {
+    //     this.vrContext.drawImage(this.renderer.domElement, ...camera.viewport.toArray());
+    //   });
+
+    //   this.vrMesh.material.map.image = this.vrCanvas;
+    //   this.vrMesh.material.map.needsUpdate = true;
+
+    //   this.renderer.setRenderTarget(null);
+    //   this.renderer.render(this.vrMesh, this.meshCamera);
+    //   this.renderer.setRenderTarget(currentRenderTarget);
+    // }
+
+    this.renderer.xr.enabled = isXREnabled;
   }
 }
 

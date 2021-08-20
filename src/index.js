@@ -7,7 +7,6 @@ import {
   AmbientLight,
   Group,
 } from 'three';
-import { VRButton } from 'three/examples/jsm/webxr/VRButton';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
 import Audio from 'managers/Audio';
@@ -24,12 +23,24 @@ document.body.appendChild(renderer.domElement);
 
 if ('xr' in navigator) {
   renderer.xr.enabled = true;
-  renderer.xr.setFramebufferScaleFactor(2.0);
-  document.body.appendChild(VRButton.createButton(renderer));
+
+  const onClick = async () => {
+    document.body.removeEventListener('click', onClick);
+
+    const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
+    if (!supportsVR) return renderer.domElement.requestPointerLock();
+
+    const session = await navigator.xr.requestSession('immersive-vr', {
+      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
+    });
+    await renderer.xr.setSession(session);
+  };
+
+  document.body.addEventListener('click', onClick);
 }
 
 const camera = new PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 50000);
-camera.position.z = 20;
+camera.position.z = 40;
 
 const scene = new Scene();
 scene.background = new Color(0x020209);
@@ -52,10 +63,10 @@ const xwing = new Model(xwingData);
 xwing.rotation.y = Math.PI;
 xwing.position.x = xwing.size.x / 2;
 xwing.position.y -= 8;
-player.add(xwing);
+// player.add(xwing);
 
 const tie = new Model(tieData);
-tie.position.z = 25;
+// tie.position.z = 30;
 scene.add(tie);
 
 const controls = new Controls(player, renderer.domElement);
@@ -71,12 +82,6 @@ window.addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
 });
-
-const handleLock = () => {
-  renderer.domElement.requestPointerLock();
-  document.body.addEventListener('click', handleLock);
-};
-document.body.addEventListener('click', handleLock);
 
 renderer.setAnimationLoop(() => {
   // Animate FOV when boosting
