@@ -87,13 +87,13 @@ class PostProcessing {
 
     const onSessionStateChange = () => {
       const rendererSize = new Vector2();
-      renderer.getSize(rendererSize);
+      this.renderer.getSize(rendererSize);
 
       this.setSize(rendererSize.x, rendererSize.y);
     };
 
-    renderer.xr.addEventListener('sessionstart', onSessionStateChange);
-    renderer.xr.addEventListener('sessionend', onSessionStateChange);
+    this.renderer.xr.addEventListener('sessionstart', onSessionStateChange);
+    this.renderer.xr.addEventListener('sessionend', onSessionStateChange);
   }
 
   setSize(width, height) {
@@ -135,7 +135,7 @@ class PostProcessing {
     uniforms.tNormal.value = this.normalRenderTarget.texture;
 
     this.renderer.setRenderTarget(null);
-    this.renderer.render(this.mesh, this.meshCamera);
+    // this.renderer.render(this.mesh, this.meshCamera);
     this.renderer.setRenderTarget(currentRenderTarget);
 
     // if (this.renderer.xr.isPresenting) {
