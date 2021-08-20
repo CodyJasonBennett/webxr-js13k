@@ -121,10 +121,10 @@ class PostProcessing {
   render() {
     this.renderer.render(this.scene, this.camera);
 
-    // let isXREnabled = this.renderer.xr.enabled;
-    // if (isXREnabled) {
-    //   this.renderer.xr.enabled = false;
-    // }
+    let isXREnabled = this.renderer.xr.enabled;
+    if (isXREnabled) {
+      this.renderer.xr.enabled = false;
+    }
 
     const currentRenderTarget = this.renderer.getRenderTarget();
 
@@ -143,7 +143,7 @@ class PostProcessing {
     uniforms.tNormal.value = this.normalRenderTarget.texture;
 
     this.renderer.setRenderTarget(null);
-    // this.renderer.render(this.mesh, this.meshCamera);
+    this.renderer.render(this.mesh, this.meshCamera);
     this.renderer.setRenderTarget(currentRenderTarget);
 
     // if (this.renderer.xr.isPresenting) {
@@ -161,7 +161,7 @@ class PostProcessing {
     //   this.renderer.setRenderTarget(currentRenderTarget);
     // }
 
-    // this.renderer.xr.enabled = isXREnabled;
+    this.renderer.xr.enabled = isXREnabled;
   }
 }
 
