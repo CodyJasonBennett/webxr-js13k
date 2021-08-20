@@ -97,7 +97,8 @@ if ('xr' in navigator) {
   };
 
   const onSessionEnd = () => {
-    renderer.setSize(currentSize);
+    renderer.setSize(currentSize.x, currentSize.y);
+    effects.setSize(currentSize.x, currentSize.y);
   };
 
   const onClick = async () => {
