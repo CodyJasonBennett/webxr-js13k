@@ -21,23 +21,20 @@ const renderer = new WebGLRenderer();
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
-if ('xr' in navigator) {
+const onClick = async () => {
+  document.body.removeEventListener('click', onClick);
+
+  const supportsVR = await navigator.xr?.isSessionSupported('immersive-vr');
+  if (!supportsVR) return renderer.domElement.requestPointerLock();
+
   renderer.xr.enabled = true;
+  const session = await navigator.xr.requestSession('immersive-vr', {
+    optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
+  });
+  await renderer.xr.setSession(session);
+};
 
-  const onClick = async () => {
-    document.body.removeEventListener('click', onClick);
-
-    const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
-    if (!supportsVR) return renderer.domElement.requestPointerLock();
-
-    const session = await navigator.xr.requestSession('immersive-vr', {
-      optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
-    });
-    await renderer.xr.setSession(session);
-  };
-
-  document.body.addEventListener('click', onClick);
-}
+document.body.addEventListener('click', onClick);
 
 const camera = new PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 50000);
 camera.position.z = 40;
