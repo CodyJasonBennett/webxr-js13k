@@ -85,30 +85,13 @@ renderer.setAnimationLoop(() => {
 });
 
 if ('xr' in navigator) {
-  const currentSize = new Vector2();
-  renderer.getSize(currentSize);
-
   renderer.xr.enabled = true;
-
-  const onSessionStart = () => {
-    const baseLayer = renderer.xr.getBaseLayer();
-    renderer.setSize(baseLayer.framebufferWidth, baseLayer.framebufferHeight);
-    effects.setSize(baseLayer.framebufferWidth, baseLayer.framebufferHeight);
-  };
-
-  const onSessionEnd = () => {
-    renderer.setSize(currentSize.x, currentSize.y);
-    effects.setSize(currentSize.x, currentSize.y);
-  };
 
   const onClick = async () => {
     document.body.removeEventListener('click', onClick);
 
     const supportsVR = await navigator.xr.isSessionSupported('immersive-vr');
     if (!supportsVR) return renderer.domElement.requestPointerLock();
-
-    renderer.xr.addEventListener('sessionstart', onSessionStart);
-    renderer.xr.addEventListener('sessionend', onSessionEnd);
 
     const session = await navigator.xr.requestSession('immersive-vr', {
       optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking', 'layers'],
