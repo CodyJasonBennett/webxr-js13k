@@ -47,7 +47,6 @@ class PostProcessing {
     this.scene = scene;
     this.camera = camera;
 
-    this.writeBuffer = new WebGLRenderTarget();
     this.renderResolution = new Vector2();
 
     const material = new ShaderMaterial({
@@ -85,9 +84,6 @@ class PostProcessing {
 
     this.normalMaterial = new MeshNormalMaterial();
 
-    this.currentSize = new Vector2();
-    this.renderer.getSize(this.currentSize);
-
     const onSessionStart = () => {
       const baseLayer = this.renderer.xr.getBaseLayer();
       const width = baseLayer.context?.drawingBufferWidth || baseLayer.textureWidth;
@@ -107,8 +103,6 @@ class PostProcessing {
   }
 
   setSize(width, height) {
-    this.writeBuffer.setSize(width, height);
-
     this.vrCanvas.width = width;
     this.vrCanvas.height = height;
 
@@ -128,8 +122,6 @@ class PostProcessing {
       this.renderer.xr.enabled = false;
     }
 
-    const currentRenderTarget = this.renderer.getRenderTarget();
-
     this.renderer.setRenderTarget(this.rgbRenderTarget);
     this.renderer.render(this.scene, this.camera);
 
@@ -146,7 +138,6 @@ class PostProcessing {
 
     this.renderer.setRenderTarget(null);
     this.renderer.render(this.mesh, this.meshCamera);
-    this.renderer.setRenderTarget(currentRenderTarget);
 
     if (this.renderer.xr.isPresenting) {
       const { cameras } = this.renderer.xr.getCamera();
@@ -174,9 +165,7 @@ class PostProcessing {
       this.vrMesh.material.map.image = this.vrCanvas;
       this.vrMesh.material.map.needsUpdate = true;
 
-      this.renderer.setRenderTarget(null);
       this.renderer.render(this.vrMesh, this.meshCamera);
-      this.renderer.setRenderTarget(currentRenderTarget);
     }
 
     this.renderer.xr.enabled = isXREnabled;
