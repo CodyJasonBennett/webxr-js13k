@@ -95,6 +95,7 @@ class PostProcessing {
         baseLayer.framebufferHeight,
         1
       );
+      this.setSize(baseLayer.framebufferWidth, baseLayer.framebufferHeight);
     };
 
     const onSessionEnd = () => {
@@ -107,9 +108,6 @@ class PostProcessing {
   }
 
   setSize(width, height) {
-    this.renderer.setSize(width, height);
-    this.renderer.getSize(this.currentSize);
-
     this.writeBuffer.setSize(width, height);
 
     this.vrCanvas.width = width;

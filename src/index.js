@@ -76,6 +76,7 @@ const audio = new Audio();
 window.addEventListener('resize', () => {
   const { innerWidth, innerHeight } = window;
 
+  renderer.setSize(innerWidth, innerHeight);
   effects.setSize(innerWidth, innerHeight);
 
   camera.aspect = innerWidth / innerHeight;
