@@ -89,10 +89,12 @@ class PostProcessing {
     this.renderer.getSize(this.currentSize);
 
     const onSessionStart = () => {
-      const { textureWidth, textureHeight } = this.renderer.xr.getBaseLayer();
+      const baseLayer = this.renderer.xr.getBaseLayer();
+      const width = baseLayer.context?.drawingBufferWidth || baseLayer.textureWidth;
+      const height = baseLayer.context?.drawingBufferHeight || baseLayer.textureHeight;
 
-      this.renderer.setDrawingBufferSize(textureWidth, textureHeight, 1);
-      this.setSize(textureWidth, textureHeight);
+      this.renderer.setDrawingBufferSize(width, height, 1);
+      this.setSize(width, height);
     };
 
     const onSessionEnd = () => {
