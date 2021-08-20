@@ -89,8 +89,8 @@ class PostProcessing {
     };
 
     const onSessionEnd = () => {
-      this.renderer.setSize(this.currentSize.x, this.currentSize.y);
-      this.setSize(this.currentSize.x, this.currentSize.y);
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.setSize(window.innerWidth, window.innerHeight);
     };
 
     this.renderer.xr.addEventListener('sessionstart', onSessionStart);
