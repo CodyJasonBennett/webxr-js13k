@@ -141,10 +141,8 @@ class PostProcessing {
     if (this.renderer.xr.isPresenting) {
       const { cameras } = this.renderer.xr.getCamera();
 
-      cameras.forEach(({ viewport }) => {
-        const { x, y, z: width, w: height } = viewport;
-
-        this.vrContext.drawImage(this.renderer.domElement, x, y, width, height);
+      cameras.forEach(camera => {
+        this.vrContext.drawImage(this.renderer.domElement, ...camera.viewport.toArray());
       });
 
       this.vrMesh.material.map.image = this.vrCanvas;
