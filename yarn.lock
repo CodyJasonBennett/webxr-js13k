@@ -3590,11 +3590,6 @@ rimraf@~2.6.2:
   dependencies:
     glob "^7.1.3"
 
-roadroller@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/roadroller/-/roadroller-1.1.0.tgz#3dd59af943b3cd5040cf639f2661b0d446a85cc2"
-  integrity sha512-ZrnwOnYTV/oy112tO5BjKOHixm1notTC4MiYSSb77pCBwgGoXmPiGtpFr0LjLu6OtOqn02iofy0tgf2LJcIOEA==
-
 run-parallel@^1.1.9:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/run-parallel/-/run-parallel-1.2.0.tgz#66d1368da7bdf921eb9d95bd1a9229e7f21a43ee"
