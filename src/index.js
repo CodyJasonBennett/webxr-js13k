@@ -21,6 +21,9 @@ const renderer = new WebGLRenderer();
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
+document.body.style.margin = 0;
+renderer.domElement.style.cursor = 'pointer';
+
 const onClick = async () => {
   if (renderer.xr.isPresenting) return;
 

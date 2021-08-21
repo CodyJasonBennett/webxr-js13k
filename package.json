@@ -11,6 +11,7 @@
     "html-webpack-plugin": "^5.3.2",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
+    "roadroller": "^1.1.0",
     "source-map-explorer": "^2.5.2",
     "terser-webpack-plugin": "^5.1.4",
     "webpack": "^5.51.1",
@@ -22,22 +23,10 @@
   },
   "scripts": {
     "start": "webpack serve --hot --open --port 80 --mode development",
-    "build": "rimraf dist && webpack --mode production",
+    "build": "rimraf dist && webpack --mode production && node bin/bundle",
+    "postbuild": "npm run analyze",
     "analyze": "node bin/analyze",
     "lint": "prettier src --check && eslint src",
     "lint-fix": "prettier src --write && eslint src --fix"
-  },
-  "browserslist": {
-    "production": [
-      ">10%",
-      "not dead",
-      "not ie 11",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   }
 }
