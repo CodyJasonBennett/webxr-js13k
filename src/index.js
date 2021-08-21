@@ -4,8 +4,9 @@ import {
   Scene,
   Color,
   Fog,
-  AmbientLight,
   Group,
+  AmbientLight,
+  Vector3,
 } from 'three';
 import PostProcessing from 'managers/PostProcessing';
 import Controls from 'managers/Controls';
@@ -13,7 +14,6 @@ import Audio from 'managers/Audio';
 import Stars from 'objects/Stars';
 import Model from 'objects/Model';
 import xwingData from 'assets/xwing';
-import tieData from 'assets/tie';
 
 const { innerWidth, innerHeight } = window;
 
@@ -22,7 +22,7 @@ renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const onClick = async () => {
-  document.body.removeEventListener('click', onClick);
+  if (renderer.xr.isPresenting) return;
 
   const supportsVR = await navigator.xr?.isSessionSupported('immersive-vr');
   if (!supportsVR) return renderer.domElement.requestPointerLock();
@@ -36,8 +36,8 @@ const onClick = async () => {
 
 document.body.addEventListener('click', onClick);
 
-const camera = new PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 50000);
-camera.position.z = 40;
+const camera = new PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 50000);
+camera.position.z = 30;
 
 const scene = new Scene();
 scene.background = new Color(0x020209);
@@ -46,29 +46,23 @@ scene.fog = new Fog(0x070715, 100, 500);
 const effects = new PostProcessing(renderer, scene, camera);
 effects.setSize(innerWidth, innerHeight);
 
+const player = new Group();
+scene.add(player);
+
+const controls = new Controls(player, renderer.domElement);
+
+const audio = new Audio();
+
 const ambientLight = new AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
 
 const stars = new Stars();
 scene.add(stars);
 
-const player = new Group();
-scene.add(player);
-player.add(camera);
-
 const xwing = new Model(xwingData);
 xwing.rotation.y = Math.PI;
 xwing.position.x = xwing.size.x / 2;
-xwing.position.y -= 8;
-// player.add(xwing);
-
-const tie = new Model(tieData);
-// tie.position.z = 30;
-scene.add(tie);
-
-const controls = new Controls(player, renderer.domElement);
-
-const audio = new Audio();
+player.add(xwing);
 
 window.addEventListener('resize', () => {
   const { innerWidth, innerHeight } = window;
@@ -80,20 +74,34 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
-renderer.setAnimationLoop(() => {
-  // Animate FOV when boosting
-  if (controls.boosted && camera.fov < 80) {
-    camera.fov += 0.2;
-    camera.updateProjectionMatrix();
-  } else if (!controls.boosted && camera.fov > 70) {
-    camera.fov -= 0.2;
-    camera.updateProjectionMatrix();
-  }
+const direction = new Vector3();
+const offset = new Vector3();
 
+renderer.setAnimationLoop(() => {
   controls.update();
   audio.update();
 
   scene.traverse(node => node.update?.());
+
+  // Animate FOV when boosting
+  if (controls.boosted && camera.fov < 70) {
+    camera.fov += 0.2;
+    camera.updateProjectionMatrix();
+  } else if (!controls.boosted && camera.fov > 60) {
+    camera.fov -= 0.2;
+    camera.updateProjectionMatrix();
+  }
+
+  // Animate follow camera
+  offset.copy(player.position);
+  offset.lerp(player.position, 0.4);
+
+  direction.copy(offset).sub(camera.position).normalize();
+  const distance = offset.distanceTo(camera.position) - 20;
+  camera.position.addScaledVector(direction, distance);
+
+  camera.lookAt(player.position);
+  camera.quaternion.copy(player.quaternion);
 
   effects.render();
 });

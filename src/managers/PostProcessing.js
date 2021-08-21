@@ -17,6 +17,7 @@ import vertexShader from 'shaders/vert';
 import fragmentShader from 'shaders/frag';
 
 const PIXEL_SIZE = 3;
+const IPD_DISTANCE = 100;
 
 const pixelRenderTarget = (resolution, pixelFormat, useDepthTexture) => {
   const renderTarget = new WebGLRenderTarget(
@@ -86,9 +87,13 @@ class PostProcessing {
 
       this.renderer.setDrawingBufferSize(width, height, 1);
       this.setSize(width, height);
+
+      this.mesh.material.uniforms.scaleX.value = 2.0;
     };
 
     const onSessionEnd = () => {
+      this.mesh.material.uniforms.scaleX.value = 1.0;
+
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.setSize(window.innerWidth, window.innerHeight);
     };
@@ -114,9 +119,6 @@ class PostProcessing {
       this.renderer.xr.enabled = false;
     }
 
-    const uniforms = this.mesh.material.uniforms;
-    uniforms.scaleX.value = this.renderer.xr.isPresenting ? 2.0 : 1.0;
-
     this.renderer.setRenderTarget(this.rgbRenderTarget);
     this.renderer.render(this.scene, this.camera);
 
@@ -124,13 +126,13 @@ class PostProcessing {
     this.renderer.setRenderTarget(this.normalRenderTarget);
     this.scene.overrideMaterial = this.normalMaterial;
     this.renderer.render(this.scene, this.camera);
+    this.renderer.setRenderTarget(null);
     this.scene.overrideMaterial = overrideMaterial_old;
 
+    const uniforms = this.mesh.material.uniforms;
     uniforms.tDiffuse.value = this.rgbRenderTarget.texture;
     uniforms.tDepth.value = this.rgbRenderTarget.depthTexture;
     uniforms.tNormal.value = this.normalRenderTarget.texture;
-
-    this.renderer.setRenderTarget(null);
 
     if (this.renderer.xr.isPresenting) {
       const { cameras } = this.renderer.xr.getCamera();
@@ -139,7 +141,7 @@ class PostProcessing {
         const [x, y, width, height] = camera.viewport.toArray();
 
         // Manually offset each eye to account for IPD
-        const offset = index ? -100 : 100;
+        const offset = IPD_DISTANCE * (index ? -1 : 1);
 
         this.renderer.setViewport(x + offset, y, width, height);
         this.renderer.setScissor(x + offset, y, width, height);

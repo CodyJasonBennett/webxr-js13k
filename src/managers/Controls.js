@@ -93,7 +93,7 @@ class Controls {
     const moveMult = delta * MOVEMENT_SPEED * boostMult;
     const rotMult = delta * ROLL_SPEED;
 
-    // this.object.translateZ(-moveMult);
+    this.object.translateZ(-moveMult);
 
     this.tmpQuaternion
       .set(
