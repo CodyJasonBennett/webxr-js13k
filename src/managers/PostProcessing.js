@@ -13,8 +13,8 @@ import {
   RGBFormat,
   MeshNormalMaterial,
 } from 'three';
-import vertexShader from 'shaders/vert';
-import fragmentShader from 'shaders/frag';
+import fragmentShader from 'shaders/pixelFrag.glsl';
+import vertexShader from 'shaders/pixelVert.glsl';
 
 const PIXEL_SIZE = 3;
 const IPD_DISTANCE = 100;
@@ -63,8 +63,8 @@ class PostProcessing {
           ),
         },
       },
-      vertexShader,
       fragmentShader,
+      vertexShader,
     });
     const geometry = new BufferGeometry();
     geometry.setAttribute(
