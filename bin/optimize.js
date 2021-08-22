@@ -16,7 +16,7 @@ const packer = new Packer([{ type: 'js', action: 'eval', data }], {
   arrayBufferPool: new ArrayBufferPool(),
 });
 
-packer.optimizeSparseSelectors();
+packer.optimize();
 
 const { firstLine, secondLine } = packer.makeDecoder();
 
