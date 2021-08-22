@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { explore } from 'source-map-explorer';
-import { join } from 'path';
-import { statSync } from 'fs';
+const { explore } = require('source-map-explorer');
+const { join } = require('path');
+const { statSync } = require('fs');
 
 const DIST_DIR = join(process.cwd(), 'dist');
 

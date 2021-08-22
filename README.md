@@ -20,12 +20,6 @@ To create a production build:
 yarn build
 ```
 
-To optimize bundle for distribution:
-
-```bash
-yarn optimize
-```
-
 To check output size:
 
 ```bash

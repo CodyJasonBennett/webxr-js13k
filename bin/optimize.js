@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { join } from 'path';
-import { readFileSync, writeFileSync } from 'fs';
-import { ArrayBufferPool, defaultSparseSelectors, Packer } from 'roadroller';
+const { join } = require('path');
+const { readFileSync, writeFileSync } = require('fs');
+const { ArrayBufferPool, defaultSparseSelectors, Packer } = require('roadroller');
 
 const BUNDLE_PATH = join(process.cwd(), 'dist/main.js');
 const TEMPLATE_PATH = join(process.cwd(), 'dist/index.html');
