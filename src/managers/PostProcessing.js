@@ -153,7 +153,7 @@ class PostProcessing {
       this.eyeLPos.setFromMatrixPosition(cameraL.matrixWorld);
       this.eyeRPos.setFromMatrixPosition(cameraR.matrixWorld);
 
-      const IPD = 50 || this.eyeLPos.distanceTo(this.eyeRPos);
+      const IPD = this.eyeLPos.distanceTo(this.eyeRPos);
 
       const projL = cameraL.projectionMatrix.elements;
       const projR = cameraR.projectionMatrix.elements;
