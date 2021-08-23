@@ -12,12 +12,13 @@ import {
   RGBAFormat,
   RGBFormat,
   MeshNormalMaterial,
+  Vector3,
+  Scene,
 } from 'three';
 import fragmentShader from 'shaders/pixelFrag.glsl';
 import vertexShader from 'shaders/pixelVert.glsl';
 
 const PIXEL_SIZE = 3;
-const IPD_DISTANCE = 100;
 
 const pixelRenderTarget = (resolution, pixelFormat, useDepthTexture) => {
   const renderTarget = new WebGLRenderTarget(
@@ -73,7 +74,12 @@ class PostProcessing {
     );
     geometry.setAttribute('uv', new Float32BufferAttribute([0, 2, 0, 0, 2, 0], 2));
     this.mesh = new Mesh(geometry, material);
+    this.meshScene = new Scene();
+    this.meshScene.add(this.mesh);
     this.meshCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    this.eyeLPos = new Vector3();
+    this.eyeRPos = new Vector3();
 
     this.rgbRenderTarget = pixelRenderTarget(this.renderResolution, RGBAFormat, true);
     this.normalRenderTarget = pixelRenderTarget(this.renderResolution, RGBFormat, false);
@@ -92,10 +98,10 @@ class PostProcessing {
     };
 
     const onSessionEnd = () => {
-      this.mesh.material.uniforms.scaleX.value = 1.0;
-
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.setSize(window.innerWidth, window.innerHeight);
+
+      this.mesh.material.uniforms.scaleX.value = 2.0;
     };
 
     this.renderer.xr.addEventListener('sessionstart', onSessionStart);
@@ -111,48 +117,71 @@ class PostProcessing {
     this.mesh.material.uniforms.resolution.value.set(x, y, 1 / x, 1 / y);
   }
 
-  render() {
-    this.renderer.render(this.scene, this.camera);
-
-    let isXREnabled = this.renderer.xr.enabled;
-    if (isXREnabled) {
-      this.renderer.xr.enabled = false;
-    }
-
+  renderFrame() {
+    // Render colors
     this.renderer.setRenderTarget(this.rgbRenderTarget);
     this.renderer.render(this.scene, this.camera);
 
-    const overrideMaterial_old = this.scene.overrideMaterial;
+    // Render normals
     this.renderer.setRenderTarget(this.normalRenderTarget);
     this.scene.overrideMaterial = this.normalMaterial;
     this.renderer.render(this.scene, this.camera);
     this.renderer.setRenderTarget(null);
-    this.scene.overrideMaterial = overrideMaterial_old;
+    this.scene.overrideMaterial = null;
 
+    // Update uniforms
     const uniforms = this.mesh.material.uniforms;
     uniforms.tDiffuse.value = this.rgbRenderTarget.texture;
     uniforms.tDepth.value = this.rgbRenderTarget.depthTexture;
     uniforms.tNormal.value = this.normalRenderTarget.texture;
 
+    // Render effect mesh
+    this.renderer.render(this.mesh, this.meshCamera);
+  }
+
+  render() {
+    // Disable stereo projection
+    let isXREnabled = this.renderer.xr.enabled;
+    if (isXREnabled) {
+      this.renderer.xr.enabled = false;
+    }
+
     if (this.renderer.xr.isPresenting) {
       const { cameras } = this.renderer.xr.getCamera();
+      const [cameraL, cameraR] = cameras;
+
+      this.eyeLPos.setFromMatrixPosition(cameraL.matrixWorld);
+      this.eyeRPos.setFromMatrixPosition(cameraR.matrixWorld);
+
+      const IPD = 50 || this.eyeLPos.distanceTo(this.eyeRPos);
+
+      const projL = cameraL.projectionMatrix.elements;
+      const projR = cameraR.projectionMatrix.elements;
+
+      const leftFov = (projL[8] - 1) / projL[0];
+      const rightFov = (projR[8] + 1) / projR[0];
+
+      const zOffset = IPD / (-leftFov + rightFov);
+      const xOffset = zOffset * -leftFov;
 
       cameras.forEach((camera, index) => {
         const [x, y, width, height] = camera.viewport.toArray();
 
-        // Manually offset each eye to account for IPD
-        const offset = IPD_DISTANCE * (index ? -1 : 1);
+        this.mesh.translateX(xOffset * (index ? -1 : 1));
 
-        this.renderer.setViewport(x + offset, y, width, height);
-        this.renderer.setScissor(x + offset, y, width, height);
+        this.renderer.setViewport(x, y, width, height);
+        this.renderer.setScissor(x, y, width, height);
         this.renderer.setScissorTest(true);
 
-        this.renderer.render(this.mesh, this.meshCamera);
+        this.renderFrame();
       });
+
+      this.mesh.position.set(0, 0, 0);
     } else {
-      this.renderer.render(this.mesh, this.meshCamera);
+      this.renderFrame();
     }
 
+    // Re-enable stereo projection
     this.renderer.xr.enabled = isXREnabled;
   }
 }
