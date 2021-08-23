@@ -20,6 +20,12 @@ To create a production build:
 yarn build
 ```
 
+To create an optimized (JS13K) build:
+
+```bash
+yarn build-optimized
+```
+
 To check output size:
 
 ```bash
