@@ -23,8 +23,7 @@
   },
   "scripts": {
     "start": "webpack serve --hot --open --port 80 --mode development",
-    "build": "rimraf dist && webpack --mode production",
-    "build-optimized": "npm run build && node bin/optimize",
+    "build": "rimraf dist && webpack --mode production && node bin/optimiz",
     "postbuild": "npm run analyze",
     "analyze": "node bin/analyze",
     "lint": "prettier src --check && eslint src",
