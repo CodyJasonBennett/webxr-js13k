@@ -11,6 +11,7 @@
     "prettier": "^2.3.2",
     "raw-loader": "^4.0.2",
     "rimraf": "^3.0.2",
+    "roadroller": "^1.2.1",
     "source-map-explorer": "^2.5.2",
     "terser-webpack-plugin": "^5.1.4",
     "webpack": "^5.51.1",
