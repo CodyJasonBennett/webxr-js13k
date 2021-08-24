@@ -54,7 +54,6 @@ class PostProcessing {
         tDiffuse: { value: null },
         tDepth: { value: null },
         tNormal: { value: null },
-        scaleX: { type: 'f', value: 1.0 },
         resolution: {
           value: new Vector4(
             this.renderResolution.x,
@@ -95,8 +94,6 @@ class PostProcessing {
       this.renderer.setDrawingBufferSize(width, height, 1);
       this.setSize(width, height);
       this.currentSize.set(width, height);
-
-      this.mesh.material.uniforms.scaleX.value = 2.0;
     };
 
     const onSessionEnd = () => {
@@ -105,8 +102,6 @@ class PostProcessing {
       this.renderer.setSize(innerWidth, innerHeight);
       this.setSize(innerWidth, innerHeight);
       this.currentSize.set(innerWidth, innerHeight);
-
-      this.mesh.material.uniforms.scaleX.value = 1.0;
     };
 
     this.renderer.xr.addEventListener('sessionstart', onSessionStart);
@@ -165,7 +160,7 @@ class PostProcessing {
       cameras.forEach((camera, index) => {
         const [x, y, width, height] = camera.viewport.toArray();
 
-        this.mesh.translateX(IPD * (index ? -2 : 2));
+        this.mesh.translateX(IPD * (index ? -1 : 1));
 
         this.renderer.setViewport(x, y, width, height);
         this.renderer.setScissor(x, y, width, height);
