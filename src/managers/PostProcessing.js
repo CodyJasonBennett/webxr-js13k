@@ -78,6 +78,7 @@ class PostProcessing {
     this.meshScene.add(this.mesh);
     this.meshCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
+    this.currentSize = new Vector2();
     this.eyeLPos = new Vector3();
     this.eyeRPos = new Vector3();
 
@@ -93,15 +94,19 @@ class PostProcessing {
 
       this.renderer.setDrawingBufferSize(width, height, 1);
       this.setSize(width, height);
+      this.currentSize.set(width, height);
 
       this.mesh.material.uniforms.scaleX.value = 2.0;
     };
 
     const onSessionEnd = () => {
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
-      this.setSize(window.innerWidth, window.innerHeight);
+      const { innerWidth, innerHeight } = window;
 
-      this.mesh.material.uniforms.scaleX.value = 2.0;
+      this.renderer.setSize(innerWidth, innerHeight);
+      this.setSize(innerWidth, innerHeight);
+      this.currentSize.set(innerWidth, innerHeight);
+
+      this.mesh.material.uniforms.scaleX.value = 1.0;
     };
 
     this.renderer.xr.addEventListener('sessionstart', onSessionStart);
@@ -175,6 +180,10 @@ class PostProcessing {
 
         this.renderFrame();
       });
+
+      this.renderer.setViewport(0, 0, this.currentSize.x, this.currentSize.y);
+      this.renderer.setScissor(0, 0, this.currentSize.x, this.currentSize.y);
+      this.renderer.setScissorTest(false);
 
       this.mesh.position.set(0, 0, 0);
     } else {
