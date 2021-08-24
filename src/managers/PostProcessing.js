@@ -136,7 +136,7 @@ class PostProcessing {
     uniforms.tNormal.value = this.normalRenderTarget.texture;
 
     // Render effect mesh
-    this.renderer.render(this.mesh, this.meshCamera);
+    this.renderer.render(this.meshScene, this.meshCamera);
   }
 
   render() {
@@ -167,7 +167,7 @@ class PostProcessing {
       cameras.forEach((camera, index) => {
         const [x, y, width, height] = camera.viewport.toArray();
 
-        this.mesh.translateX(xOffset * (index ? -1 : 1));
+        this.mesh.translateX(xOffset * (index ? 1 : -1));
 
         this.renderer.setViewport(x, y, width, height);
         this.renderer.setScissor(x, y, width, height);
