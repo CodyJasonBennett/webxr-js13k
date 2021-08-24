@@ -8,12 +8,14 @@ import {
   BufferGeometry,
   Float32BufferAttribute,
   Mesh,
+  Scene,
   OrthographicCamera,
   RGBAFormat,
   RGBFormat,
   MeshNormalMaterial,
+  MeshBasicMaterial,
+  Texture,
   Vector3,
-  Scene,
 } from 'three';
 import fragmentShader from 'shaders/pixelFrag.glsl';
 import vertexShader from 'shaders/pixelVert.glsl';
@@ -54,7 +56,6 @@ class PostProcessing {
         tDiffuse: { value: null },
         tDepth: { value: null },
         tNormal: { value: null },
-        scaleX: { type: 'f', value: 1.0 },
         resolution: {
           value: new Vector4(
             this.renderResolution.x,
@@ -78,7 +79,10 @@ class PostProcessing {
     this.meshScene.add(this.mesh);
     this.meshCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-    this.currentSize = new Vector2();
+    this.vrMesh = new Mesh(geometry, new MeshBasicMaterial({ map: new Texture() }));
+    this.vrCanvas = document.createElement('canvas');
+    this.vrContext = this.vrCanvas.getContext('2d');
+
     this.eyeLPos = new Vector3();
     this.eyeRPos = new Vector3();
 
@@ -94,9 +98,6 @@ class PostProcessing {
 
       this.renderer.setDrawingBufferSize(width, height, 1);
       this.setSize(width, height);
-      this.currentSize.set(width, height);
-
-      this.mesh.material.uniforms.scaleX.value = 2.0;
     };
 
     const onSessionEnd = () => {
@@ -104,9 +105,6 @@ class PostProcessing {
 
       this.renderer.setSize(innerWidth, innerHeight);
       this.setSize(innerWidth, innerHeight);
-      this.currentSize.set(innerWidth, innerHeight);
-
-      this.mesh.material.uniforms.scaleX.value = 1.0;
     };
 
     this.renderer.xr.addEventListener('sessionstart', onSessionStart);
@@ -114,6 +112,9 @@ class PostProcessing {
   }
 
   setSize(width, height) {
+    this.vrCanvas.width = width;
+    this.vrCanvas.height = height;
+
     const [x, y] = [(width / PIXEL_SIZE) | 0, (height / PIXEL_SIZE) | 0];
     this.renderResolution.set(x, y);
 
@@ -145,7 +146,7 @@ class PostProcessing {
   }
 
   render() {
-    // Disable stereo projection
+    // Disable xr projection
     let isXREnabled = this.renderer.xr.enabled;
     if (isXREnabled) {
       this.renderer.xr.enabled = false;
@@ -172,25 +173,37 @@ class PostProcessing {
       cameras.forEach((camera, index) => {
         const [x, y, width, height] = camera.viewport.toArray();
 
+        // Offset eye camera
         this.mesh.translateX(xOffset * (index ? 1 : -1));
 
-        this.renderer.setViewport(x, y, width, height);
-        this.renderer.setScissor(x, y, width, height);
-        this.renderer.setScissorTest(true);
-
         this.renderFrame();
+        this.vrContext.drawImage(
+          this.renderer.domElement,
+          width / 2,
+          0,
+          width,
+          height,
+          x,
+          y,
+          width,
+          height
+        );
       });
 
-      this.renderer.setViewport(0, 0, this.currentSize.x, this.currentSize.y);
-      this.renderer.setScissor(0, 0, this.currentSize.x, this.currentSize.y);
-      this.renderer.setScissorTest(false);
+      // Update stereo projection plane
+      this.vrMesh.material.map.image = this.vrCanvas;
+      this.vrMesh.material.map.needsUpdate = true;
 
+      // Render effect
+      this.renderer.render(this.vrMesh, this.meshCamera);
+
+      // Cleanup mono projection plane
       this.mesh.position.set(0, 0, 0);
     } else {
       this.renderFrame();
     }
 
-    // Re-enable stereo projection
+    // Re-enable xr projection
     this.renderer.xr.enabled = isXREnabled;
   }
 }
