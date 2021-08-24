@@ -162,21 +162,10 @@ class PostProcessing {
 
       const IPD = this.eyeLPos.distanceTo(this.eyeRPos);
 
-      const projL = cameraL.projectionMatrix.elements;
-      const projR = cameraR.projectionMatrix.elements;
-
-      const leftFov = (projL[8] - 1) / projL[0];
-      const rightFov = (projR[8] + 1) / projR[0];
-
-      const zOffset = IPD / (-leftFov + rightFov);
-      const xOffset = zOffset * -leftFov;
-
-      console.log(IPD, xOffset);
-
-      cameras.forEach(camera => {
+      cameras.forEach((camera, index) => {
         const [x, y, width, height] = camera.viewport.toArray();
 
-        // this.mesh.translateX(xOffset * (index ? 1 : -1));
+        this.mesh.translateX(IPD * (index ? 1 : -1));
 
         this.renderer.setViewport(x, y, width, height);
         this.renderer.setScissor(x, y, width, height);
