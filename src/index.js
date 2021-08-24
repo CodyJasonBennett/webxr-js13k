@@ -87,24 +87,24 @@ renderer.setAnimationLoop(() => {
   scene.traverse(node => node.update?.());
 
   // Animate FOV when boosting
-  if (controls.boosted && camera.fov < 70) {
-    camera.fov += 0.2;
-    camera.updateProjectionMatrix();
-  } else if (!controls.boosted && camera.fov > 60) {
-    camera.fov -= 0.2;
-    camera.updateProjectionMatrix();
-  }
+  // if (controls.boosted && camera.fov < 70) {
+  //   camera.fov += 0.2;
+  //   camera.updateProjectionMatrix();
+  // } else if (!controls.boosted && camera.fov > 60) {
+  //   camera.fov -= 0.2;
+  //   camera.updateProjectionMatrix();
+  // }
 
   // Animate follow camera
-  offset.copy(player.position);
-  offset.lerp(player.position, 0.4);
+  // offset.copy(player.position);
+  // offset.lerp(player.position, 0.4);
 
-  direction.copy(offset).sub(camera.position).normalize();
-  const distance = offset.distanceTo(camera.position) - 20;
-  camera.position.addScaledVector(direction, distance);
+  // direction.copy(offset).sub(camera.position).normalize();
+  // const distance = offset.distanceTo(camera.position) - 20;
+  // camera.position.addScaledVector(direction, distance);
 
-  camera.lookAt(player.position);
-  camera.quaternion.copy(player.quaternion);
+  // camera.lookAt(player.position);
+  // camera.quaternion.copy(player.quaternion);
 
   effects.render();
 });
