@@ -174,7 +174,7 @@ class PostProcessing {
       cameras.forEach((camera, index) => {
         const [x, y, width, height] = camera.viewport.toArray();
 
-        this.mesh.translateX(xOffset * (index ? 0.5 : -0.5));
+        this.mesh.translateX(xOffset * (index ? 0.25 : -0.25));
 
         this.renderer.setViewport(x, y, width, height);
         this.renderer.setScissor(x, y, width, height);
