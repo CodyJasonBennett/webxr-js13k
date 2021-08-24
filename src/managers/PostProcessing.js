@@ -16,6 +16,7 @@ import {
   MeshBasicMaterial,
   Texture,
   Vector3,
+  WebGLRenderer,
 } from 'three';
 import fragmentShader from 'shaders/pixelFrag.glsl';
 import vertexShader from 'shaders/pixelVert.glsl';
@@ -79,6 +80,7 @@ class PostProcessing {
     this.meshScene.add(this.mesh);
     this.meshCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
+    this.vrRenderer = new WebGLRenderer({ preserveDrawingBuffer: true });
     this.vrMesh = new Mesh(geometry, new MeshBasicMaterial({ map: new Texture() }));
     this.vrCanvas = document.createElement('canvas');
     this.vrContext = this.vrCanvas.getContext('2d');
@@ -112,6 +114,8 @@ class PostProcessing {
   }
 
   setSize(width, height) {
+    this.vrRenderer.setSize(width, height);
+
     this.vrCanvas.width = width;
     this.vrCanvas.height = height;
 
@@ -124,15 +128,17 @@ class PostProcessing {
   }
 
   renderFrame() {
+    const renderer = this.renderer.xr.isPresenting ? this.vrRenderer : this.renderer;
+
     // Render colors
-    this.renderer.setRenderTarget(this.rgbRenderTarget);
-    this.renderer.render(this.scene, this.camera);
+    renderer.setRenderTarget(this.rgbRenderTarget);
+    renderer.render(this.scene, this.camera);
 
     // Render normals
-    this.renderer.setRenderTarget(this.normalRenderTarget);
+    renderer.setRenderTarget(this.normalRenderTarget);
     this.scene.overrideMaterial = this.normalMaterial;
-    this.renderer.render(this.scene, this.camera);
-    this.renderer.setRenderTarget(null);
+    renderer.render(this.scene, this.camera);
+    renderer.setRenderTarget(null);
     this.scene.overrideMaterial = null;
 
     // Update uniforms
@@ -142,7 +148,7 @@ class PostProcessing {
     uniforms.tNormal.value = this.normalRenderTarget.texture;
 
     // Render effect mesh
-    this.renderer.render(this.meshScene, this.meshCamera);
+    renderer.render(this.meshScene, this.meshCamera);
   }
 
   render() {
@@ -178,7 +184,7 @@ class PostProcessing {
 
         this.renderFrame();
         this.vrContext.drawImage(
-          this.renderer.domElement,
+          this.vrRenderer.domElement,
           width / 2,
           0,
           width,
