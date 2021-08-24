@@ -171,10 +171,12 @@ class PostProcessing {
       const zOffset = IPD / (-leftFov + rightFov);
       const xOffset = zOffset * -leftFov;
 
-      cameras.forEach((camera, index) => {
+      console.log(IPD, xOffset);
+
+      cameras.forEach(camera => {
         const [x, y, width, height] = camera.viewport.toArray();
 
-        this.mesh.translateX(xOffset * (index ? 0.1 : -0.1));
+        // this.mesh.translateX(xOffset * (index ? 1 : -1));
 
         this.renderer.setViewport(x, y, width, height);
         this.renderer.setScissor(x, y, width, height);
