@@ -17,7 +17,7 @@ import xwingData from 'assets/xwing';
 
 const { innerWidth, innerHeight } = window;
 
-const renderer = new WebGLRenderer();
+const renderer = new WebGLRenderer({ preserveDrawingBuffer: true });
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
