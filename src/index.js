@@ -6,6 +6,7 @@ import {
   Fog,
   Group,
   AmbientLight,
+  Clock,
   Vector3,
 } from 'three';
 import PostProcessing from 'managers/PostProcessing';
@@ -20,9 +21,6 @@ const { innerWidth, innerHeight } = window;
 const renderer = new WebGLRenderer();
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
-
-document.body.style.margin = 0;
-renderer.domElement.style.cursor = 'pointer';
 
 const onClick = async () => {
   if (renderer.xr.isPresenting) return;
@@ -77,34 +75,41 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
 });
 
+const clock = new Clock();
+
 const direction = new Vector3();
 const offset = new Vector3();
 
 renderer.setAnimationLoop(() => {
-  controls.update();
-  audio.update();
+  const delta = clock.getDelta();
 
-  scene.traverse(node => node.update?.());
+  controls.update(delta);
+  audio.update(delta);
 
-  // Animate FOV when boosting
-  // if (controls.boosted && camera.fov < 70) {
-  //   camera.fov += 0.2;
-  //   camera.updateProjectionMatrix();
-  // } else if (!controls.boosted && camera.fov > 60) {
-  //   camera.fov -= 0.2;
-  //   camera.updateProjectionMatrix();
-  // }
+  scene.traverse(node => node.update?.(delta));
 
-  // Animate follow camera
-  // offset.copy(player.position);
-  // offset.lerp(player.position, 0.4);
+  // Use camera animations when not in WebXR
+  if (!renderer.xr.isPresenting) {
+    // Animate FOV when boosting
+    if (controls.boosted && camera.fov < 70) {
+      camera.fov += 0.2;
+      camera.updateProjectionMatrix();
+    } else if (!controls.boosted && camera.fov > 60) {
+      camera.fov -= 0.2;
+      camera.updateProjectionMatrix();
+    }
 
-  // direction.copy(offset).sub(camera.position).normalize();
-  // const distance = offset.distanceTo(camera.position) - 20;
-  // camera.position.addScaledVector(direction, distance);
+    // Animate follow camera
+    offset.copy(player.position);
+    offset.lerp(player.position, 0.4);
 
-  // camera.lookAt(player.position);
-  // camera.quaternion.copy(player.quaternion);
+    direction.copy(offset).sub(camera.position).normalize();
+    const distance = offset.distanceTo(camera.position) - 20;
+    camera.position.addScaledVector(direction, distance);
+
+    camera.lookAt(player.position);
+    camera.quaternion.copy(player.quaternion);
+  }
 
   effects.render();
 });

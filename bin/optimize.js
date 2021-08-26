@@ -17,7 +17,11 @@ packer.optimize().then(() => {
   writeFileSync(
     TEMPLATE_PATH,
     readFileSync(TEMPLATE_PATH, 'utf-8')
+      // Optimize CSS
+      .replace(/(?!<style>)([^>]+)(?=<\/style>)/g, match => match.replace(/\s|\n/g, ''))
+      // Remove old bundle
       .replace('<script defer="defer" src="main.js"></script>', '')
+      // Insert optimized bundle
       .replace('<body>', `<body><script>${firstLine}\n${secondLine}</script>`)
   );
 });
