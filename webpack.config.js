@@ -2,12 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = (_, { mode }) => ({
-  externals:
-    mode === 'production'
-      ? {
-          three: 'THREE',
-        }
-      : undefined,
+  externals: mode === 'production' ? { three: 'THREE' } : undefined,
   module: {
     rules: [
       {
@@ -29,7 +24,18 @@ module.exports = (_, { mode }) => ({
         CDN: mode === 'production',
       },
       filename: './index.html',
-      minify: 'auto',
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+        removeEmptyAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        keepClosingSlash: true,
+        minifyJS: true,
+        minifyCSS: true,
+        minifyURLs: true,
+      },
     }),
   ],
   devtool: 'source-map',

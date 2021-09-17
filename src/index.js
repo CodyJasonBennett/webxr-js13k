@@ -15,6 +15,7 @@ import Audio from 'managers/Audio';
 import Stars from 'objects/Stars';
 import Model from 'objects/Model';
 import xwingData from 'assets/xwing';
+import menuAudio from 'assets/audio/menu';
 
 const { innerWidth, innerHeight } = window;
 
@@ -53,6 +54,7 @@ scene.add(player);
 const controls = new Controls(player, renderer.domElement);
 
 const audio = new Audio();
+audio.play(menuAudio)
 
 const ambientLight = new AmbientLight(0xffffff, 1);
 scene.add(ambientLight);

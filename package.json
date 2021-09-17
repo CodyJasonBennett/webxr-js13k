@@ -11,15 +11,15 @@
     "prettier": "^2.3.2",
     "raw-loader": "^4.0.2",
     "rimraf": "^3.0.2",
-    "roadroller": "^1.2.1",
+    "roadroller": "^2.0.0",
     "source-map-explorer": "^2.5.2",
-    "terser-webpack-plugin": "^5.1.4",
+    "terser-webpack-plugin": "^5.2.0",
     "webpack": "^5.51.1",
     "webpack-cli": "^4.1.0",
-    "webpack-dev-server": "^4.0.0"
+    "webpack-dev-server": "^4.1.0"
   },
   "dependencies": {
-    "three": "^0.132.0"
+    "three": "^0.132.2"
   },
   "scripts": {
     "start": "webpack serve --hot --open --port 80 --mode development",
